@@ -1,0 +1,7 @@
+NUM_MONITORS="$(xrandr | grep ' connected' | wc -l)"
+
+if [ $NUM_MONITORS -gt 1 ]
+then
+    xrandr --output eDP-1-1 --off
+    xrandr --output DP-1-1-2 --right-of DP-1-2-1
+fi

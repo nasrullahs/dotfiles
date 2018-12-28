@@ -1,0 +1,26 @@
+[user]
+	email = nasrullah@rtr.ai
+	name = Nasrullah Taha
+[core]
+	excludesfile = /home/nasrullah/.gitignore_global
+	editor = emacs -nw
+    pager = /home/nasrullah/.local/bin/diff-highlight | less -R
+[push]
+	default = simple
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[rerere]
+	enabled = true
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = red bold 52
+	newNormal = green bold
+	newHighlight = green bold 22
+[color "diff"]
+	meta = yellow
+	frag = magenta bold
+	commit = yellow
+	whitespace = red reverse

@@ -1,0 +1,119 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+import requests
+
+WEATHER_ICONS = {
+    "unknown": u" ", #u"✨",
+    "sunny": '<span foreground="yellow">' + u"☀️" + '</span>',
+    "overcast": u"☁️",
+    "partlycloudy": '<span foreground="yellow">' + u"⛅️" + '</span>',
+    "cloudy": u"☁️",
+    "verycloudy": '<span foreground="gray">' + u"☁️" + '</span>',
+    "mist": u"🌫",
+    "fog": u"🌫",
+    "haze": u"🌫",
+    "lightrain": '<span foreground="#77BBFF">' + u"🌦" + '</span>',
+    "heavyrain": '<span foreground="#3399FF">' + u"🌧" + '</span>',
+    "thunderyheavyrain": '<span foreground="#3399FF">' + u"🌩" + '</span>',
+    "lightshowers": '<span foreground="77BBFF">' + u"🌦" + '</span>',
+    "heavyshowers": '<span foreground="#3399FF">' + u"🌧" + '</span>',
+    "snow": '<span foreground="white">' + u"🌨" + '</span>',
+    "lightsnow": u"🌨",
+    "heavysnow": '<span foreground="white">' + u"❄️" + '</span>',
+    "lightsnowshowers": '<span foreground="#77BBFF">' + u"🌨" + '</span>',
+    "heavysnowshowers": '<span foreground="#77BBFF">' + u"❄️" + '</span>',
+    "lightsleet": u"🌧",
+    "lightsleetshowers": u"🌧",
+    "thunderyshowers": '<span foreground="#3399FF">' + u"⛈" + '</span>',
+    "thunderysnowshowers": '<span foreground="#3399FF">' + u"⛈" + '</span>',
+}
+
+WEATHER_URL="https://wttr.in/Boston?m0TQ"
+
+def main():
+    response = requests.get(WEATHER_URL, headers={'User-Agent': 'curl'})
+    text = response.text.split('\n')
+    lines = [
+        line[15:].strip() for line in text
+    ]
+
+    descriptions = lines[0].lower().replace(' ', '').split(',')
+    icon = WEATHER_ICONS['unknown']
+    for d in descriptions:
+        if d in WEATHER_ICONS:
+            icon = WEATHER_ICONS[d]
+            break
+
+    temperature = lines[1]
+    wind = lines[2]
+    precipitation = lines[4]
+
+    temperature_range = temperature.split(' ')[0]
+    temperature_unit = temperature.split(' ')[1]
+    temperature_range = temperature_range.split('..')
+    if len(temperature_range) == 2:
+        low = int(temperature_range[0])
+        high = int(temperature_range[1])
+
+        def temp_to_colour(temp):
+            if temp < -20:
+                return '#4444FF'
+            elif temp < -5:
+                return '#5484F4'
+            elif temp > 32:
+                return 'red'
+            elif temp > 26:
+                return '#CC6666'
+            else:
+                return '#AAAAAA'
+
+        temperature = '<span foreground="{low_colour}">{low}</span><span letter_spacing="5000">-</span><span foreground="{high_colour}">{high}</span> {units}'.format(
+            low=low,
+            high=high,
+            low_colour=temp_to_colour(low),
+            high_colour=temp_to_colour(high),
+            units=temperature_unit,
+        )
+
+    wind_speed = int(wind.split(' ')[1])
+    if wind_speed > 45:
+        wind_colour = 'red'
+    elif wind_speed > 25:
+        wind_colour = '#CC6666'
+    elif wind_speed > 8:
+        wind_colour = '#AAAAAA'
+    else:
+        wind_colour = '#555555'
+
+    precipitation_amount = float(precipitation.split(' ')[0])
+    if precipitation_amount > 20.0:
+        precip_colour = 'red'
+    elif precipitation_amount > 7.6:
+        precip_colour = '#5484F4'
+    elif precipitation_amount > 2.5:
+        precip_colour = '#7492C4'
+    elif precipitation_amount > 0:
+        precip_colour = '#557799'
+    else:
+        precip_colour = '#555555'
+
+
+    print('{icon}  {temperature}'
+    '<span foreground="#555555" letter_spacing="5000">|</span>'
+    '<span foreground="{wind_colour}">{wind}</span>'
+    '<span foreground="#555555" letter_spacing="5000">|</span>'
+    '<span foreground="{precip_colour}">'
+    '💧 {precipitation}'
+    '</span>'.format(
+        icon=icon,
+        temperature=temperature,
+        wind=wind,
+        wind_colour=wind_colour,
+        precipitation=precipitation,
+        precip_colour=precip_colour,
+    ))
+
+
+if __name__ == '__main__':
+    main()
