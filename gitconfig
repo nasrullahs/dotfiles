@@ -24,3 +24,5 @@
 	frag = magenta bold
 	commit = yellow
 	whitespace = red reverse
+[credential]
+	helper = store

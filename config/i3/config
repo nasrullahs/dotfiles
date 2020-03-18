@@ -160,7 +160,7 @@ bar {
 }
 
 exec xset b off
-exec xset r rate 250 50
+exec xset r rate 270 40
 
 focus_follows_mouse no
 mouse_warping none
@@ -171,6 +171,11 @@ workspace 1 output $firstMonitor
 workspace 2 output $firstMonitor
 workspace 3 output $secondMonitor
 workspace 4 output $secondMonitor
+workspace 5 output $firstMonitor
+workspace 6 output $secondMonitor
+workspace 7 output $firstMonitor
+workspace 8 output $secondMonitor
+workspace 9 output $firstMonitor
 workspace 10 output $secondMonitor
 
 for_window [class="rtr_toolkit"] move container to workspace 2
@@ -186,7 +191,7 @@ bindsym shift+Pause exec "~/.local/bin/suspend"
 
 exec --no-startup-id xautolock -time 5 -locker ~/.local/bin/screen-lock
 
-exec --no-startup-id /usr/bin/feh --randomize --bg-fill ~/Pictures/*
+exec --no-startup-id /usr/bin/feh --randomize --bg-fill ~/Pictures/wallpapers/*
 
 exec --no-startup-id /usr/bin/slack
 

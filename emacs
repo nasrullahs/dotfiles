@@ -28,7 +28,23 @@ nil)))
 (global-set-key (kbd "C-<f6>") 'helm-ls-git-ls)
 (global-set-key (kbd "C-x M-f") 'helm-browse-project)
 
-(require 'multiple-cursors)
+(use-package multiple-cursors
+  :init
+  (use-package phi-search
+    :init
+    ;; credit to @jonebird for the following
+    ;; Allow isearch functionality with multipl-cursors
+    (add-hook 'multiple-cursors-mode-enabled-hook
+              (lambda ()
+                (interactive)
+                (global-set-key (kbd "C-s") 'phi-search)
+                (global-set-key (kbd "C-r") 'phi-search-backward)))
+
+    (add-hook 'multiple-cursors-mode-disabled-hook
+              (lambda ()
+                (interactive)
+                (global-set-key (kbd "C-s") 'isearch-forward)
+                (global-set-key (kbd "C-r") 'isearch-backward)))))
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
@@ -51,7 +67,7 @@ nil)))
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (tide typescript-mode web-mode rjsx-mode ggtags flycheck-irony irony lsp-mode use-package multiple-cursors helm-ls-git google-c-style flycheck darcula-theme)))
+    (phi-search-mc tide typescript-mode web-mode rjsx-mode ggtags flycheck-irony irony lsp-mode use-package multiple-cursors helm-ls-git google-c-style flycheck darcula-theme)))
  '(scroll-bar-mode nil)
  '(show-paren-mode 1)
  '(tab-width 4)

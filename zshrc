@@ -101,6 +101,8 @@ backlight() {
 
 }
 
+alias diff='colordiff'
+
 alias weather="curl 'wttr.in?m' | less -S"
 alias idunno="echo '¯\_(ツ)_/¯' | pbcopy"
 
@@ -113,7 +115,7 @@ alias cdp="cd ~/Projects/rapidplan/"
 alias g='gst'
 alias gf='git fetch --all --prune'
 alias gdw='git diff --color-words'
-alias gdww="git diff --color-words='\w+|.'"
+alias gdww="git diff --color-words='\w+|.' --ignore-space-change "
 alias gfm='git fetch origin master:master'
 alias glgg='git log --graph --decorate'
 alias todos='git diff --unified=0 HEAD | grep -i todo'
@@ -128,9 +130,11 @@ alias pbpaste="xclip -selection clipboard -o"
 alias cmc="ratkin clean && rm -rf /home/nasrullah/Projects/rapidplan/{build,devel}"
 alias cm="ratkin build -DCMAKE_BUILD_TYPE=RELWITHDEBINFO -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
 alias cmd="ratkin build -DCMAKE_BUILD_TYPE=Debug"
-alias rtrtk="gdb /home/nasrullah/Projects/rapidplan/devel/lib/rtr_toolkit/rtr-toolkit"
-alias rtrcal="gdb /home/nasrullah/Projects/rapidplan/devel/lib/rtr_calibration_gui/rtr_calibration_gui"alias cmr="cm rtr_toolkit && rtrtk"
-alias cmt="cm && ratkin run_tests"
+alias rtrtk="gdb /home/nasrullah/Projects/rapidplan/devel/lib/rtr_toolkit/rtr_toolkit"
+alias cmt="cm rtr_toolkit && rtrtk"
+alias cma="cm rtr_appliance_app && gdb /home/nasrullah/Projects/rapidplan/devel/lib/rtr_appliance_app/rtr_appliance_app"
+alias cmw="(cd src/apps/rtr_appliance_webapp/client && npm ci && npm run build) && (cd src/apps/rtr_appliance_webapp/server && npm ci && ./node_modules/typescript/bin/tsc && node start.js)"
+alias cmtest="cm && ratkin run_tests"
 alias format="/home/nasrullah/Projects/rapidplan/scripts/format-code.sh"
 alias ratkin='echo "
                             (\,/)

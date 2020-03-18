@@ -45,10 +45,9 @@ separator=false
 [wifi]
 instance=wlp2s0
 interval=10
-separator=false
 
 [iface]
-instance=wlp2s0
+label=🖧
 interval=10
 
 # Memory usage
