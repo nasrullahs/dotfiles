@@ -10,9 +10,10 @@ WEATHER_ICONS = {
     "partlycloudy": '<span foreground="yellow">' + u"⛅️" + '</span>',
     "cloudy": u"☁️",
     "verycloudy": '<span foreground="gray">' + u"☁️" + '</span>',
-    "mist": u"🌫",
-    "fog": u"🌫",
-    "haze": u"🌫",
+    "mist": u"🌁",
+    "fog": u"🌁",
+    "haze": u"🌁",
+    "rain": '<span foreground="#77BBFF">' + u"🌦" + '</span>',
     "lightrain": '<span foreground="#77BBFF">' + u"🌦" + '</span>',
     "heavyrain": '<span foreground="#3399FF">' + u"🌧" + '</span>',
     "thunderyheavyrain": '<span foreground="#3399FF">' + u"🌩" + '</span>',
@@ -29,7 +30,7 @@ WEATHER_ICONS = {
     "thunderysnowshowers": '<span foreground="#3399FF">' + u"⛈" + '</span>',
 }
 
-WEATHER_URL="https://wttr.in/Boston?m0TQ"
+WEATHER_URL="https://wttr.in/?m0TQ"
 
 def main():
     response = requests.get(WEATHER_URL, headers={'User-Agent': 'curl'})

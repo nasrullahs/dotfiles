@@ -178,7 +178,7 @@ workspace 8 output $secondMonitor
 workspace 9 output $firstMonitor
 workspace 10 output $secondMonitor
 
-for_window [class="rtr_toolkit"] move container to workspace 2
+for_window [class="Toolkit"] move container to workspace 2
 for_window [class="Realtime Robotics - RapidSense"] move container to workspace 2
 
 bindsym $mod+Shift+Left move workspace to output left

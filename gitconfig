@@ -26,3 +26,5 @@
 	whitespace = red reverse
 [credential]
 	helper = store
+[pager]
+	branch = false

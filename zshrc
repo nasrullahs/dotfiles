@@ -118,6 +118,7 @@ alias gdw='git diff --color-words'
 alias gdww="git diff --color-words='\w+|.' --ignore-space-change "
 alias gfm='git fetch origin master:master'
 alias glgg='git log --graph --decorate'
+alias gstu='gsta -u'
 alias todos='git diff --unified=0 HEAD | grep -i todo'
 
 alias sag="sudo apt-get"
@@ -145,7 +146,7 @@ alias ratkin='echo "
                                 '\''~  '\''~----'\'''\''
 " && catkin'
 
-source /opt/ros/kinetic/setup.zsh
+source /opt/ros/melodic/setup.zsh
 
 # because create react app by default opens a tab when the server starts
 export BROWSER=none

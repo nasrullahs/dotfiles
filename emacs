@@ -67,7 +67,7 @@ nil)))
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (phi-search-mc tide typescript-mode web-mode rjsx-mode ggtags flycheck-irony irony lsp-mode use-package multiple-cursors helm-ls-git google-c-style flycheck darcula-theme)))
+    (phi-search phi-search-mc tide typescript-mode web-mode rjsx-mode ggtags flycheck-irony irony lsp-mode use-package multiple-cursors helm-ls-git google-c-style flycheck darcula-theme)))
  '(scroll-bar-mode nil)
  '(show-paren-mode 1)
  '(tab-width 4)

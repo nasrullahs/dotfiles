@@ -47,7 +47,7 @@ instance=wlp2s0
 interval=10
 
 [iface]
-label=🖧
+label=💻
 interval=10
 
 # Memory usage
@@ -71,7 +71,7 @@ markup=pango
 
 
 [load_average]
-label=⛭
+label=⚙️
 interval=10
 
 # Battery indicator
