@@ -67,7 +67,7 @@ nil)))
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (phi-search phi-search-mc tide typescript-mode web-mode rjsx-mode ggtags flycheck-irony irony lsp-mode use-package multiple-cursors helm-ls-git google-c-style flycheck darcula-theme)))
+    (add-node-modules-path prettier-js phi-search phi-search-mc tide typescript-mode web-mode rjsx-mode ggtags flycheck-irony irony lsp-mode use-package multiple-cursors helm-ls-git google-c-style flycheck darcula-theme)))
  '(scroll-bar-mode nil)
  '(show-paren-mode 1)
  '(tab-width 4)
@@ -153,7 +153,10 @@ nil)))
   :ensure t
   :mode (("\\.html?\\'" . web-mode)
          ("\\.tsx\\'" . web-mode)
-         ("\\.jsx\\'" . web-mode))
+         ("\\.ts\\'" . web-mode)
+         ("\\.jsx\\'" . web-mode)
+         ("\\.js\\'" . web-mode)
+         ("\\.css\\'" . web-mode))
   :config
   (setq web-mode-markup-indent-offset 2
         web-mode-css-indent-offset 2
@@ -163,6 +166,7 @@ nil)))
 
         web-mode-enable-css-colorization t
         web-mode-enable-auto-pairing t
+        web-mode-enable-auto-quoting nil
         web-mode-enable-comment-keywords t
         web-mode-enable-current-element-highlight t
         web-mode-enable-auto-indentation nil
@@ -187,6 +191,8 @@ nil)))
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)))
 
-(use-package css-mode
-  :config
-  (setq css-indent-offset 2))
+(require 'prettier-js)
+(eval-after-load 'web-mode
+    '(progn
+       (add-hook 'web-mode-hook #'add-node-modules-path)
+       (add-hook 'web-mode-hook #'prettier-js-mode)))
