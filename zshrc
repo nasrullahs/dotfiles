@@ -109,8 +109,8 @@ alias idunno="echo '¯\_(ツ)_/¯' | pbcopy"
 alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
 
-alias cdp="cd ~/Projects/rapidplan/"
-
+alias cdp="cd ~/Projects/rapidplan/ && source install/setup.zsh"
+alias cdurcap="cd ~/Projects/com.rtr.realtimemove"
 
 alias g='gst'
 alias gf='git fetch --all --prune'

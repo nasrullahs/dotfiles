@@ -100,7 +100,7 @@ def main():
         precip_colour = '#555555'
 
 
-    print('{icon}  {temperature}'
+    print('{icon} {temperature}'
     '<span foreground="#555555" letter_spacing="5000">|</span>'
     '<span foreground="{wind_colour}">{wind}</span>'
     '<span foreground="#555555" letter_spacing="5000">|</span>'

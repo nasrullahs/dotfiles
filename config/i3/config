@@ -9,12 +9,13 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-exec /usr/bin/gnome-settings-daemon
+#exec /usr/lib/gnome-settings-daemon/gsd-xsettings
 exec redshift
+exec setxkbmap dvorak -option ctrl:nocaps -option altwin:swap_alt_win; xset r rate 270 50
 exec xinput list | grep -Eo 'Touchpad\s+id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}' | xargs xinput --disable
 
 # run autokey - using supervisor because it keeps crashing
-exec supervisord -c ~/.supervisor/autokey.conf
+# exec supervisord -c ~/.supervisor/autokey.conf
 
 set $mod Mod4
 
@@ -179,6 +180,7 @@ workspace 9 output $firstMonitor
 workspace 10 output $secondMonitor
 
 for_window [class="Toolkit"] move container to workspace 2
+for_window [class="rtr_toolkit"] move container to workspace 2
 for_window [class="Realtime Robotics - RapidSense"] move container to workspace 2
 
 bindsym $mod+Shift+Left move workspace to output left
