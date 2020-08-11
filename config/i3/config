@@ -13,9 +13,9 @@
 exec redshift
 exec setxkbmap dvorak -option ctrl:nocaps -option altwin:swap_alt_win; xset r rate 270 50
 exec xinput list | grep -Eo 'Touchpad\s+id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}' | xargs xinput --disable
-
-# run autokey - using supervisor because it keeps crashing
-# exec supervisord -c ~/.supervisor/autokey.conf
+exec xinput set-prop 13 363 {0,1}
+exec xinput set-prop 13 336 1
+exec autokey
 
 set $mod Mod4
 
@@ -189,6 +189,7 @@ bindsym $mod+Shift+Up  move workspace to output up
 bindsym $mod+Shift+Right move workspace to output right
 
 bindsym Pause exec "~/.local/bin/screen-lock"
+bindsym $mod+l exec "~/.local/bin/screen-lock"
 bindsym shift+Pause exec "~/.local/bin/suspend"
 
 exec --no-startup-id xautolock -time 5 -locker ~/.local/bin/screen-lock
@@ -197,8 +198,8 @@ exec --no-startup-id /usr/bin/feh --randomize --bg-fill ~/Pictures/wallpapers/*
 
 exec --no-startup-id /usr/bin/slack
 
-bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+ && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume exec amixer sset Master 5%- && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioRaiseVolume exec amixer -D pulse sset Master 5%+ && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioLowerVolume exec amixer -D pulse sset Master 5%- && pkill -RTMIN+10 i3blocks
 
 bindsym shift+Scroll_Lock exec xbacklight -inc 10
 bindsym shift+Print exec xbacklight -dec 10

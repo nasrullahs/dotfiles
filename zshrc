@@ -116,6 +116,7 @@ alias g='gst'
 alias gf='git fetch --all --prune'
 alias gdw='git diff --color-words'
 alias gdww="git diff --color-words='\w+|.' --ignore-space-change "
+alias gsww="git show --color-words='\w+|.' --ignore-space-change "
 alias gfm='git fetch origin master:master'
 alias glgg='git log --graph --decorate'
 alias gstu='gsta -u'
