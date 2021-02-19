@@ -6,6 +6,7 @@ import requests
 WEATHER_ICONS = {
     "unknown": u" ", #u"✨",
     "sunny": '<span foreground="yellow">' + u"☀️" + '</span>',
+    "clear": '<span foreground="yellow">' + u"☀️" + '</span>',
     "overcast": u"☁️",
     "partlycloudy": '<span foreground="yellow">' + u"⛅️" + '</span>',
     "cloudy": u"☁️",

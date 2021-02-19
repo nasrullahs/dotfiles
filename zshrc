@@ -110,6 +110,7 @@ alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
 
 alias cdp="cd ~/Projects/rapidplan/ && source install/setup.zsh"
+alias cdp2="cd ~/Projects/rapidplan2/ && source install/setup.zsh"
 alias cdurcap="cd ~/Projects/com.rtr.realtimemove"
 
 alias g='gst'
@@ -129,15 +130,16 @@ alias sacs="sudo apt-cache search"
 alias pbcopy"xclip -selection clipboard"
 alias pbpaste="xclip -selection clipboard -o"
 
-alias cmc="ratkin clean && rm -rf /home/nasrullah/Projects/rapidplan/{build,devel}"
+alias cmc="ratkin clean && rm -rf ./{build,devel}"
 alias cm="ratkin build -DCMAKE_BUILD_TYPE=RELWITHDEBINFO -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
 alias cmd="ratkin build -DCMAKE_BUILD_TYPE=Debug"
-alias rtrtk="gdb /home/nasrullah/Projects/rapidplan/devel/lib/rtr_toolkit/rtr_toolkit"
+alias rtrtk="gdb ./devel/lib/rtr_toolkit/rtr_toolkit"
+alias rtrapp="./devel/lib/rtr_appliance_app/rtr_appliance_app"
 alias cmt="cm rtr_toolkit && rtrtk"
-alias cma="cm rtr_appliance_app && gdb /home/nasrullah/Projects/rapidplan/devel/lib/rtr_appliance_app/rtr_appliance_app"
+alias cma="cm rtr_appliance_app && gdb ./devel/lib/rtr_appliance_app/rtr_appliance_app"
 alias cmw="(cd src/apps/rtr_appliance_webapp/client && npm ci && npm run build) && (cd src/apps/rtr_appliance_webapp/server && npm ci && ./node_modules/typescript/bin/tsc && node start.js)"
 alias cmtest="cm && ratkin run_tests"
-alias format="/home/nasrullah/Projects/rapidplan/scripts/format-code.sh"
+alias format="./scripts/format-code.sh -d"
 alias ratkin='echo "
                             (\,/)
                             oo   '\'''\'''\''//,        _
@@ -151,6 +153,8 @@ source /opt/ros/melodic/setup.zsh
 
 # because create react app by default opens a tab when the server starts
 export BROWSER=none
+export RTR_ROBOT_MODELS_MASTER_TOKEN=58812e58a6d6174d0ca766e065ade8b288516f4ced1f2f53
+export RTR_DEV_MODE="YES"
 
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
