@@ -33,6 +33,18 @@ WEATHER_ICONS = {
 
 WEATHER_URL="https://wttr.in/?m0TQ"
 
+def temp_to_colour(temp):
+    if temp < -20:
+        return '#4444FF'
+    elif temp < -5:
+        return '#5484F4'
+    elif temp > 32:
+        return '#CC1111'
+    elif temp > 26:
+        return '#CC6666'
+    else:
+        return '#AAAAAA'
+
 def main():
     response = requests.get(WEATHER_URL, headers={'User-Agent': 'curl'})
     text = response.text.split('\n')
@@ -51,32 +63,38 @@ def main():
     wind = lines[2]
     precipitation = lines[4]
 
-    temperature_range = temperature.split(' ')[0]
+    temperature_values = temperature.split(' ')[0]
     temperature_unit = temperature.split(' ')[1]
-    temperature_range = temperature_range.split('..')
-    if len(temperature_range) == 2:
-        low = int(temperature_range[0])
-        high = int(temperature_range[1])
 
-        def temp_to_colour(temp):
-            if temp < -20:
-                return '#4444FF'
-            elif temp < -5:
-                return '#5484F4'
-            elif temp > 32:
-                return 'red'
-            elif temp > 26:
-                return '#CC6666'
-            else:
-                return '#AAAAAA'
+    if '(' in temperature_values and ')' in temperature_values:
+        temperature_values = temperature_values.replace('+', '').replace('(', ' ').replace(')', ' ').strip().split(' ')
 
-        temperature = '<span foreground="{low_colour}">{low}</span><span letter_spacing="5000">-</span><span foreground="{high_colour}">{high}</span> {units}'.format(
-            low=low,
-            high=high,
-            low_colour=temp_to_colour(low),
-            high_colour=temp_to_colour(high),
-            units=temperature_unit,
-        )
+        if len(temperature_values) == 2:
+
+            current =  int(temperature_values[0])
+            feels_like = int(temperature_values[1])
+
+            temperature = '<span foreground="{current_colour}">{current}{units}</span> <span letter_spacing="5000"></span><span foreground="{feels_like_colour}">({feels_like}{units})</span>'.format(
+                current=current,
+                feels_like=feels_like,
+                current_colour=temp_to_colour(current),
+                feels_like_colour=temp_to_colour(feels_like),
+                units=temperature_unit,
+            )
+    else:
+        temperature_range = temperature_values.split('..')
+
+        if len(temperature_range) == 2:
+            low = int(temperature_range[0])
+            high = int(temperature_range[1])
+
+            temperature = '<span foreground="{low_colour}">{low}</span><span letter_spacing="5000">-</span><span foreground="{high_colour}">{high}</span> {units}'.format(
+                low=low,
+                high=high,
+                low_colour=temp_to_colour(low),
+                high_colour=temp_to_colour(high),
+                units=temperature_unit,
+            )
 
     wind_speed = int(wind.split(' ')[1])
     if wind_speed > 45:
