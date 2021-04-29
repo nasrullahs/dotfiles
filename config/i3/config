@@ -9,7 +9,7 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-#exec /usr/lib/gnome-settings-daemon/gsd-xsettings
+exec /usr/libexec/gsd-xsettings
 exec redshift
 exec setxkbmap dvorak -option ctrl:nocaps -option altwin:swap_alt_win; xset r rate 270 50
 exec xinput list | grep -Eo 'Touchpad\s+id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}' | xargs xinput --disable
@@ -179,9 +179,8 @@ workspace 8 output $secondMonitor
 workspace 9 output $firstMonitor
 workspace 10 output $secondMonitor
 
-for_window [class="Toolkit"] move container to workspace 2
-for_window [class="rtr_toolkit"] move container to workspace 2
 for_window [class="Realtime Robotics - RapidSense"] move container to workspace 2
+for_window [class="Realtime Robotics - RapidPlan Create"] move container to workspace 2
 
 bindsym $mod+Shift+Left move workspace to output left
 bindsym $mod+Shift+Down move workspace to output down
@@ -191,6 +190,7 @@ bindsym $mod+Shift+Right move workspace to output right
 bindsym Pause exec "~/.local/bin/screen-lock"
 bindsym $mod+l exec "~/.local/bin/screen-lock"
 bindsym shift+Pause exec "~/.local/bin/suspend"
+bindsym shift+$mod+l exec "~/.local/bin/suspend"
 
 exec --no-startup-id xautolock -time 5 -locker ~/.local/bin/screen-lock
 

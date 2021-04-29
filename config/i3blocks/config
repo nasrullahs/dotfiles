@@ -52,6 +52,7 @@ interval=10
 
 # Memory usage
 [memory]
+label=🐏
 interval=30
 markup=pango
 
@@ -104,6 +105,6 @@ signal=10
 interval=10
 
 [time]
-command=date '+%Y-%m-%d %-H:%M'
-#command=date '+%a, %b %d %Y %-H:%M'
+#command=date '+%Y-%m-%d %-H:%M'
+command=date '+%a %b %d %Y %-H:%M'
 interval=5
