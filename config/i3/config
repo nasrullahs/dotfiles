@@ -11,7 +11,7 @@
 
 exec /usr/libexec/gsd-xsettings
 exec redshift
-exec setxkbmap dvorak -option ctrl:nocaps -option altwin:swap_alt_win; xset r rate 270 50
+exec setxkbmap dvorak; xset r rate 270 50
 exec xinput list | grep -Eo 'Touchpad\s+id\=[0-9]{1,2}' | grep -Eo '[0-9]{1,2}' | xargs xinput --disable
 exec xinput set-prop 13 363 {0,1}
 exec xinput set-prop 13 336 1
@@ -187,9 +187,7 @@ bindsym $mod+Shift+Down move workspace to output down
 bindsym $mod+Shift+Up  move workspace to output up
 bindsym $mod+Shift+Right move workspace to output right
 
-bindsym Pause exec "~/.local/bin/screen-lock"
 bindsym $mod+l exec "~/.local/bin/screen-lock"
-bindsym shift+Pause exec "~/.local/bin/suspend"
 bindsym shift+$mod+l exec "~/.local/bin/suspend"
 
 exec --no-startup-id xautolock -time 5 -locker ~/.local/bin/screen-lock
@@ -205,6 +203,6 @@ bindsym shift+Scroll_Lock exec xbacklight -inc 10
 bindsym shift+Print exec xbacklight -dec 10
 
 # Scratchpad
-bindsym $mod+Shift+asciitilde move scratchpad
-bindsym $mod+grave scratchpad show
+bindsym $mod+Shift+Escape move scratchpad
+bindsym $mod+Escape scratchpad show
 for_window [class="slack"] move container to workspace scratchpad

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sudo apt-get install i3 i3blocks dmenu feh xautolock redshift gtk-redshift autokey autokey-gtk zsh git ripgrep tree xclip xsel htop ipython3 scrot colordiff emacs global imagemagick, i3lock-color-git, scrot
+sudo apt-get install i3 i3blocks dmenu feh xautolock redshift gtk-redshift zsh git ripgrep tree xclip xsel htop ipython3 scrot colordiff emacs global imagemagick, i3lock-color-git, scrot
 
 mv ~/.config/i3/config ~/.config/i3/config.bak
 ln -s ./config/i3/config ~/.config/i3/config
