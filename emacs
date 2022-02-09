@@ -50,15 +50,17 @@ nil)))
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
+(load-theme 'darcula t)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (darcula)))
- '(custom-safe-themes
-   (quote
-    ("41c8c11f649ba2832347fe16fe85cf66dafe5213ff4d659182e25378f9cfc183" "3d5720f488f2ed54dd4e40e9252da2912110948366a16aef503f3e9e7dfe4915" "7bc31a546e510e6bde482ebca992e293a54cb075a0cbfb384bf2bf5357d4dee3" "fad38808e844f1423c68a1888db75adf6586390f5295a03823fa1f4959046f81" "c697b65591ba1fdda42fae093563867a95046466285459bd4e686dc95a819310" default)))
+ ;; '(custom-enabled-themes (quote (darcula)))
+ ;; '(custom-safe-themes
+ ;;   (quote
+ ;;    ("41c8c11f649ba2832347fe16fe85cf66dafe5213ff4d659182e25378f9cfc183" "3d5720f488f2ed54dd4e40e9252da2912110948366a16aef503f3e9e7dfe4915" "7bc31a546e510e6bde482ebca992e293a54cb075a0cbfb384bf2bf5357d4dee3" "fad38808e844f1423c68a1888db75adf6586390f5295a03823fa1f4959046f81" "c697b65591ba1fdda42fae093563867a95046466285459bd4e686dc95a819310" default)))
  '(global-auto-revert-mode t)
  '(ido-mode t nil (ido))
  '(indent-tabs-mode nil)
@@ -67,7 +69,7 @@ nil)))
  '(menu-bar-mode nil)
  '(package-selected-packages
    (quote
-    (add-node-modules-path prettier-js phi-search phi-search-mc tide typescript-mode web-mode rjsx-mode ggtags flycheck-irony irony lsp-mode use-package multiple-cursors helm-ls-git google-c-style flycheck darcula-theme)))
+    (add-node-modules-path prettier-js phi-search phi-search-mc tide typescript-mode web-mode rjsx-mode ggtags flycheck-irony irony lsp-mode use-package multiple-cursors helm-ls-git flycheck darcula-theme)))
  '(scroll-bar-mode nil)
  '(show-paren-mode 1)
  '(tab-width 4)
@@ -98,17 +100,17 @@ nil)))
                 (kill-buffer buffer)))))
 (put 'upcase-region 'disabled nil)
 
-(use-package irony
-  :commands irony-mode
-  :init (dolist (hook '(c-mode-hook c++-mode-hook))
-          (add-hook hook #'irony-mode))
-  :config (progn
-            (add-hook 'irony-mode-hook
-                      (lambda ()
-                        (irony-cdb-autosetup-compile-options)))
-            ;; For some reason Irony is not detecting C++11, so force it
-            (setq-default irony-additional-clang-options '("-std=c++11")))
-:ensure t)
+;; (use-package irony
+;;   :commands irony-mode
+;;   :init (dolist (hook '(c-mode-hook c++-mode-hook))
+;;           (add-hook hook #'irony-mode))
+;;   :config (progn
+;;             (add-hook 'irony-mode-hook
+;;                       (lambda ()
+;;                         (irony-cdb-autosetup-compile-options)))
+;;             ;; For some reason Irony is not detecting C++11, so force it
+;;             (setq-default irony-additional-clang-options '("-std=c++11")))
+;; :ensure t)
 
 ;; (use-package flycheck-irony
 ;;   :commands flycheck-irony-setup
@@ -125,58 +127,51 @@ nil)))
 ;;                           flycheck-gcc-language-standard "c++11"))
 ;; :ensure t)
 
-(use-package google-c-style
-  ;; Not available on MELPA Stable, loaded from plugins
-  :commands google-set-c-style
-  :init (add-hook 'c-mode-common-hook
-                  (lambda ()
-                    (google-set-c-style)
-(c-set-offset 'inextern-lang 0))))
 
-(require 'ggtags)
-(add-hook 'c-mode-common-hook
-          (lambda ()
-            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
-              (ggtags-mode 1))))
+;; (require 'ggtags)
+;; (add-hook 'c-mode-common-hook
+;;           (lambda ()
+;;             (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+;;               (ggtags-mode 1))))
 
 
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1))
+;; (defun setup-tide-mode ()
+;;   (interactive)
+;;   (tide-setup)
+;;   (flycheck-mode +1)
+;;   (setq flycheck-check-syntax-automatically '(save mode-enabled))
+;;   (eldoc-mode +1)
+;;   (tide-hl-identifier-mode +1))
 
-(require 'flycheck)
-(use-package web-mode
-  :ensure t
-  :mode (("\\.html?\\'" . web-mode)
-         ("\\.tsx\\'" . web-mode)
-         ("\\.ts\\'" . web-mode)
-         ("\\.jsx\\'" . web-mode)
-         ("\\.js\\'" . web-mode)
-         ("\\.css\\'" . web-mode))
-  :config
-  (setq web-mode-markup-indent-offset 2
-        web-mode-css-indent-offset 2
-        web-mode-code-indent-offset 2
-        web-mode-block-padding 2
-        web-mode-comment-style 2
+;; (require 'flycheck)
+;; (use-package web-mode
+;;   :ensure t
+;;   :mode (("\\.html?\\'" . web-mode)
+;;          ("\\.tsx\\'" . web-mode)
+;;          ("\\.ts\\'" . web-mode)
+;;          ("\\.jsx\\'" . web-mode)
+;;          ("\\.js\\'" . web-mode)
+;;          ("\\.css\\'" . web-mode))
+;;   :config
+;;   (setq web-mode-markup-indent-offset 2
+;;         web-mode-css-indent-offset 2
+;;         web-mode-code-indent-offset 2
+;;         web-mode-block-padding 2
+;;         web-mode-comment-style 2
 
-        web-mode-enable-css-colorization t
-        web-mode-enable-auto-pairing t
-        web-mode-enable-auto-quoting nil
-        web-mode-enable-comment-keywords t
-        web-mode-enable-current-element-highlight t
-        web-mode-enable-auto-indentation nil
-        )
-  (add-hook 'web-mode-hook
-            (lambda ()
-              (when (string-equal "tsx" (file-name-extension buffer-file-name))
-                (setup-tide-mode))))
-  ;; enable typescript-tslint checker
-  (flycheck-add-mode 'typescript-tslint 'web-mode))
+;;         web-mode-enable-css-colorization t
+;;         web-mode-enable-auto-pairing t
+;;         web-mode-enable-auto-quoting nil
+;;         web-mode-enable-comment-keywords t
+;;         web-mode-enable-current-element-highlight t
+;;         web-mode-enable-auto-indentation nil
+;;         )
+;;   (add-hook 'web-mode-hook
+;;             (lambda ()
+;;               (when (string-equal "tsx" (file-name-extension buffer-file-name))
+;;                 (setup-tide-mode))))
+;;   ;; enable typescript-tslint checker
+;;   (flycheck-add-mode 'typescript-tslint 'web-mode))
 
 (use-package typescript-mode
   :ensure t

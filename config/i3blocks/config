@@ -98,9 +98,8 @@ interval=30
 #label=TEMP
 #interval=10
 
-[volume-pulseaudio]
+[volume]
 label=🔊
-instance=Master
 signal=10
 interval=10
 

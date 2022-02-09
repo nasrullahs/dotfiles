@@ -2,7 +2,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/nasrullah/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -63,7 +63,7 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  git
+  git kubectl
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -81,6 +81,8 @@ source $ZSH/oh-my-zsh.sh
 # else
 #   export EDITOR='mvim'
 # fi
+
+export EDITOR='emacs'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -109,19 +111,19 @@ alias idunno="echo '¯\_(ツ)_/¯' | pbcopy"
 alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
 
-alias cdp="cd ~/Projects/rapidplan/ && source install/setup.zsh"
-alias cdp2="cd ~/Projects/rapidplan2/ && source install/setup.zsh"
-alias cdurcap="cd ~/Projects/com.rtr.realtimemove"
+alias cds="cd ~/src/"
+alias cdp="cd ~/src/mfp/"
+alias cdui="cd ~/src/mfp-ui/"
 
-alias g='gst'
-alias gf='git fetch --all --prune'
-alias gdw='git diff --color-words'
+alias g="gst"
+alias gf="git fetch --all --prune"
+alias gdw="git diff --color-words"
 alias gdww="git diff --color-words='\w+|.' --ignore-space-change "
 alias gsww="git show --color-words='\w+|.' --ignore-space-change "
-alias gfm='git fetch origin master:master'
-alias glgg='git log --graph --decorate'
-alias gstu='gsta -u'
-alias todos='git diff --unified=0 HEAD | grep -i todo'
+alias gfm="git fetch origin master:master"
+alias glgg="git log --graph --decorate"
+alias gstu="gsta -u"
+alias todos="git diff --unified=0 HEAD | grep -i todo"
 
 alias sag="sudo apt-get"
 alias sagi="sudo apt-get install"
@@ -130,30 +132,44 @@ alias sacs="sudo apt-cache search"
 alias pbcopy"xclip -selection clipboard"
 alias pbpaste="xclip -selection clipboard -o"
 
-alias cm="colcon build --base-paths src -DCMAKE_BUILD_TYPE=RELWITHDEBINFO -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
-alias cmp="colcon build --base-paths src -DCMAKE_BUILD_TYPE=RELWITHDEBINFO -DCMAKE_EXPORT_COMPILE_COMMANDS=1 --packages-up-to"
-alias cmd="colcon build --base-paths src -DCMAKE_BUILD_TYPE=Debug"
-alias rtrapp="./build/rtr_appliance_app/rtr_appliance_app"
-alias rtrwb="./build/rtr_rp_create/rtr_rp_create"
-alias cma="cm --packages-up-to rtr_appliance_app && gdb ./build/rtr_appliance_app/rtr_appliance_app"
-alias cmw="cm --packages-up-to rtr_rp_create && gdb ./build/rtr_rp_create/rtr_rp_create"
-alias webapp="(cd src/apps/rtr_appliance_webapp/client && npm ci && npm run build) && (cd src/apps/rtr_appliance_webapp/server && npm ci && ./node_modules/typescript/bin/tsc && node start.js)"
-alias cmtest="colcon test --base-paths src --event-handlers console_direct+"
-alias rptest="python ./scripts/run_test.py"
-alias format="./scripts/format-code.sh -d"
-
-source /opt/ros/foxy/setup.zsh
+alias rb="rush build --verbose"
+testmfp() {
+    if [ -z $1 ]
+    then
+        cdp && rush build && (cd packages/core; ./node_modules/mocha/bin/_mocha)
+    else
+        cdp && rush build && (cd packages/core; ./node_modules/mocha/bin/_mocha --grep $1)
+    fi
+}
 
 # because create react app by default opens a tab when the server starts
 export BROWSER=none
-export RTR_ROBOT_MODELS_MASTER_TOKEN=58812e58a6d6174d0ca766e065ade8b288516f4ced1f2f53
-export RTR_DEV_MODE=true
 export DEVTOOL_BUILD=ON
 
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
-#Virtualenvwrapper settings:
+# Virtualenvwrapper settings:
 export WORKON_HOME=$HOME/.virtualenvs
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 . /usr/local/bin/virtualenvwrapper.sh
+
+# 6RS
+export MINIKUBE_WANTNONEDRIVERWARNING=false
+export MINIKUBE_WANTREPORTERRORPROMPT=false
+export MINIKUBE_HOME=$HOME
+export CHANGE_MINIKUBE_NONE_USER=true
+export KUBECONFIG=$HOME/.kube/config
+export PATH=$HOME/.nodenv/bin:$PATH
+export PGHOST=localhost
+export PGUSER=6river
+export PGPASSWORD=6river
+export WFM_DATA_MOUNTPOINT=$HOME/src/db/data/mfp-debug/wfm
+export VAULT_ADDR="https://vault.6river.org"
+export GOPRIVATE='go.6river.tech/*,github.com/6RiverSystems/*'
+
+eval "$(nodenv init -)"
+autoload -U compinit; compinit
+
+export DISPLAY1=DP-2
+export DISPLAY2=DP-3

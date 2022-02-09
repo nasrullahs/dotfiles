@@ -4,7 +4,7 @@
 [core]
 	excludesfile = /home/nasrullah/.gitignore_global
 	editor = emacs -nw
-    pager = /home/nasrullah/.local/bin/diff-highlight | less -R
+	pager = ~/.local/bin/diff-highlight | less -R
 [push]
 	default = simple
 [filter "lfs"]
@@ -28,3 +28,12 @@
 	helper = store
 [pager]
 	branch = false
+[github]
+	user = nasrullahs
+[pull]
+	ff = only
+[url "git@github.com:"]
+	insteadof = https://github.com/
+[credential "https://github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
