@@ -63,7 +63,7 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-  git kubectl
+  git kubectl golang
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -167,6 +167,8 @@ export PGPASSWORD=6river
 export WFM_DATA_MOUNTPOINT=$HOME/src/db/data/mfp-debug/wfm
 export VAULT_ADDR="https://vault.6river.org"
 export GOPRIVATE='go.6river.tech/*,github.com/6RiverSystems/*'
+
+export PATH=$PATH:/usr/local/go/bin
 
 eval "$(nodenv init -)"
 autoload -U compinit; compinit

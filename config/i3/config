@@ -90,13 +90,13 @@ bindsym $mod+a focus parent
 
 set $workspace1 "1: terminals"
 set $workspace2 "2: www"
-set $workspace3 "3: meetings"
+set $workspace3 "3: testing"
 set $workspace4 "4"
 set $workspace5 "5"
 set $workspace6 "6"
 set $workspace7 "7"
 set $workspace8 "8"
-set $workspace9 "9: testing"
+set $workspace9 "9: meetings"
 set $workspace10 "10: code"
 
 workspace 1 output $DISPLAY1
@@ -204,6 +204,8 @@ bindsym XF86MonBrightnessUp exec xbacklight -inc 10
 bindsym XF86MonBrightnessDown exec xbacklight -dec 10
 
 # Scratchpad
+#bindsym $mod+Shift+asciitilde move scratchpad
+#bindsym $mod+grave scratchpad show
 bindsym $mod+Shift+Escape move scratchpad
 bindsym $mod+Escape scratchpad show
 for_window [class="slack"] move container to workspace scratchpad

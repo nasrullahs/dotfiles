@@ -37,13 +37,13 @@ markup=pango
 
 [ssid]
 label=W:
-instance=wlp2s0
-command=iwgetid -r
+instance=wlp0s20f3
+command=/usr/sbin/iwgetid -r
 interval=10
 separator=false
 
 [wifi]
-instance=wlp2s0
+instance=wlp0s20f3
 interval=10
 
 [iface]
