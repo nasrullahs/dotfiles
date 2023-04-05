@@ -1,3 +1,7 @@
+if [ -f ~/.zsh_local.zsh ]; then
+   source ~/.zsh_local.zsh
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -98,10 +102,6 @@ export EDITOR='emacs'
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-backlight() {
-    sudo tee /sys/class/backlight/intel_backlight/brightness <<< $(( $1 * $(</sys/class/backlight/intel_backlight/max_brightness) / 100 ))
-
-}
 
 alias diff='colordiff'
 
@@ -132,46 +132,10 @@ alias sacs="sudo apt-cache search"
 alias pbcopy"xclip -selection clipboard"
 alias pbpaste="xclip -selection clipboard -o"
 
-alias rb="rush build --verbose"
-testmfp() {
-    if [ -z $1 ]
-    then
-        cdp && rush build && (cd packages/core; ./node_modules/mocha/bin/_mocha)
-    else
-        cdp && rush build && (cd packages/core; ./node_modules/mocha/bin/_mocha --grep $1)
-    fi
-}
-
-# because create react app by default opens a tab when the server starts
-export BROWSER=none
-export DEVTOOL_BUILD=ON
-
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-
 # Virtualenvwrapper settings:
 export WORKON_HOME=$HOME/.virtualenvs
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 . /usr/local/bin/virtualenvwrapper.sh
-
-# 6RS
-export MINIKUBE_WANTNONEDRIVERWARNING=false
-export MINIKUBE_WANTREPORTERRORPROMPT=false
-export MINIKUBE_HOME=$HOME
-export CHANGE_MINIKUBE_NONE_USER=true
-export KUBECONFIG=$HOME/.kube/config
-export PATH=$HOME/.nodenv/bin:$PATH
-export PGHOST=localhost
-export PGUSER=6river
-export PGPASSWORD=6river
-export WFM_DATA_MOUNTPOINT=$HOME/src/db/data/mfp-debug/wfm
-export VAULT_ADDR="https://vault.6river.org"
-export GOPRIVATE='go.6river.tech/*,github.com/6RiverSystems/*'
-
-export PATH=$PATH:/usr/local/go/bin
-
-eval "$(nodenv init -)"
-autoload -U compinit; compinit
 
 export DISPLAY1=DP-2
 export DISPLAY2=DP-3

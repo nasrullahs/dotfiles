@@ -9,9 +9,14 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
+set $DISPLAY1 DP-2
+set $DISPLAY2 DP-3
+
 exec redshift
 exec setxkbmap dvorak; xset r rate 270 50
 exec xset b off
+
+include ~/.config/i3/local_config
 
 set $mod Mod4
 
@@ -88,16 +93,16 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
-set $workspace1 "1: terminals"
-set $workspace2 "2: www"
-set $workspace3 "3: testing"
+set $workspace1 "1"
+set $workspace2 "2"
+set $workspace3 "3"
 set $workspace4 "4"
 set $workspace5 "5"
 set $workspace6 "6"
 set $workspace7 "7"
 set $workspace8 "8"
-set $workspace9 "9: meetings"
-set $workspace10 "10: code"
+set $workspace9 "9"
+set $workspace10 "10"
 
 workspace 1 output $DISPLAY1
 workspace 2 output $DISPLAY1
@@ -122,6 +127,7 @@ bindsym $mod+8 workspace $workspace8
 bindsym $mod+9 workspace $workspace9
 bindsym $mod+0 workspace $workspace10
 
+
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace $workspace1
 bindsym $mod+Shift+2 move container to workspace $workspace2
@@ -133,6 +139,7 @@ bindsym $mod+Shift+7 move container to workspace $workspace7
 bindsym $mod+Shift+8 move container to workspace $workspace8
 bindsym $mod+Shift+9 move container to workspace $workspace9
 bindsym $mod+Shift+0 move container to workspace $workspace10
+
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -170,9 +177,6 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 
-set $DISPLAY1 DP-2
-set $DISPLAY2 DP-3
-
 bar {
     status_command i3blocks
     tray_output $DISPLAY1
@@ -191,8 +195,6 @@ bindsym $mod+Shift+Right move workspace to output right
 bindsym $mod+l exec "~/.local/bin/screen-lock"
 bindsym shift+$mod+l exec "~/.local/bin/suspend"
 
-# exec --no-startup-id xautolock -time 5 -locker ~/.local/bin/screen-lock
-
 exec --no-startup-id /usr/bin/feh --randomize --bg-fill ~/Pictures/wallpapers/*
 
 exec --no-startup-id /usr/bin/slack
@@ -200,8 +202,8 @@ exec --no-startup-id /usr/bin/slack
 bindsym XF86AudioRaiseVolume exec amixer -D pulse sset Master 5%+ && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioLowerVolume exec amixer -D pulse sset Master 5%- && pkill -RTMIN+10 i3blocks
 
-bindsym XF86MonBrightnessUp exec xbacklight -inc 10
-bindsym XF86MonBrightnessDown exec xbacklight -dec 10
+bindsym XF86MonBrightnessUp exec brightnessctl s 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl s 5%-
 
 # Scratchpad
 #bindsym $mod+Shift+asciitilde move scratchpad
