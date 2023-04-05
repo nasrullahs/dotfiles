@@ -1,29 +1,26 @@
 #!/usr/bin/env bash
 
-sudo apt-get install i3 i3blocks dmenu feh xautolock redshift gtk-redshift zsh git ripgrep tree xclip xsel htop ipython3 scrot colordiff emacs global imagemagick, i3lock-color-git, scrot
+sudo apt-get install i3 i3blocks dmenu feh xautolock redshift gtk-redshift zsh git ripgrep tree xclip xsel htop ipython3 scrot colordiff emacs global imagemagick scrot brightnessctl
+
+cd ~
 
 mv ~/.config/i3/config ~/.config/i3/config.bak
-ln -s ./config/i3/config ~/.config/i3/config
+ln -s ~/Projects/dotfiles/config/i3/config ~/.config/i3/config
 
 mv ~/.config/i3blocks/config ~/.config/i3blocks/config.bak
-ln -s ./config/i3blocks/config ~/.config/i3blocks/config
+ln -s ~/Projects/dotfiles/config/i3blocks/config ~/.config/i3blocks/config
 
 mv ~/.zshrc ~/.zshrc.bak
-ln -s ./zshrc ~/.zshrc
+ln -s ~/Projects/dotfiles/zshrc ~/.zshrc
 
 mv ~/.emacs ~/.emacs.bak
-ln -s ./emacs ~/.emacs
+ln -s ~/Projects/dotfiles/emacs ~/.emacs
 
 mv ~/.gitconfig ~/.gitconfig.bak
-ln -s ./gitconfig ~/.gitconfig
+ln -s ~/Projects/dotfiles/gitconfig ~/.gitconfig
 
 mv ~/.gitignore_global ~/.gitignore_global.bak
-ln -s ./gitignore_global ~/.gitignore_global
+ln -s ~/Projects/dotfiles/gitignore_global ~/.gitignore_global
 
-mkdir -p ~/.local/bin/
-ln -s ./local/bin/diff-highlight ~/.local/bin/diff-highlight
-ln -s ./local/bin/lock.png ~/.local/bin/lock.png
-ln -s ./local/bin/screen-lock ~/.local/bin/screen-lock
-ln -s ./local/bin/setup-multiple-monitors ~/.local/bin/setup-multiple-monitors
-ln -s ./local/bin/suspend ~/.local/bin/suspend
-ln -s ./local/bin/weather ~/.local/bin/weather
+mkdir -p ~/.local/
+ln -s ~/Projects/dotfiles/local/bin ~/.local/
