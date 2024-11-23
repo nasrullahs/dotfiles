@@ -43,6 +43,7 @@ interval=10
 separator=false
 
 [wifi]
+command=~/.local/bin/i3blocks/wifi
 instance=wlp0s20f3
 interval=10
 
@@ -52,6 +53,7 @@ interval=10
 
 # Memory usage
 [memory]
+command=~/.local/bin/i3blocks/memory
 label=🐏
 interval=30
 markup=pango
@@ -79,9 +81,11 @@ interval=10
 #
 # The battery instance defaults to 0.
 [battery]
+command=~/.local/bin/i3blocks/battery.py
 label=🔋
 #instance=1
 interval=30
+markup=pango
 
 # # OpenVPN support
 # #
