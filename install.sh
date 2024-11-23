@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sudo apt-get install i3 i3blocks dmenu feh xautolock redshift gtk-redshift zsh git ripgrep tree xclip xsel htop ipython3 scrot colordiff emacs global imagemagick scrot brightnessctl
+sudo apt install i3 i3blocks dmenu feh xautolock redshift redshift-gtk zsh git ripgrep tree xclip xsel htop ipython3 scrot colordiff emacs global imagemagick scrot brightnessctl
 
 cd ~
 

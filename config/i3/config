@@ -9,14 +9,14 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-set $DISPLAY1 DP-2
-set $DISPLAY2 DP-3
+set_from_resource $DISPLAY1 echo "$DISPLAY1"
+set_from_resource $DISPLAY2 echo "$DISPLAY2"
 
 exec redshift
 exec setxkbmap dvorak; xset r rate 270 50
 exec xset b off
 
-include ~/.config/i3/local_config
+#include ~/.config/i3/local_config
 
 set $mod Mod4
 
@@ -104,16 +104,16 @@ set $workspace8 "8"
 set $workspace9 "9"
 set $workspace10 "10"
 
-workspace 1 output $DISPLAY1
-workspace 2 output $DISPLAY1
-workspace 3 output $DISPLAY1
-workspace 4 output $DISPLAY1
-workspace 5 output $DISPLAY1
-workspace 6 output $DISPLAY2
-workspace 7 output $DISPLAY2
-workspace 8 output $DISPLAY2
-workspace 9 output $DISPLAY2
-workspace 10 output $DISPLAY2
+workspace $workspace1 output $DISPLAY1
+workspace $workspace2 output $DISPLAY1
+workspace $workspace3 output $DISPLAY1
+workspace $workspace4 output $DISPLAY1
+workspace $workspace5 output $DISPLAY1
+workspace $workspace6 output $DISPLAY2
+workspace $workspace7 output $DISPLAY2
+workspace $workspace8 output $DISPLAY2
+workspace $workspace9 output $DISPLAY2
+workspace $workspace10 output $DISPLAY2
 
 # switch to workspace
 bindsym $mod+1 workspace $workspace1
@@ -179,7 +179,7 @@ bindsym $mod+r mode "resize"
 
 bar {
     status_command i3blocks
-    tray_output $DISPLAY1
+#    tray_output $DISPLAY1
 }
 
 focus_follows_mouse no

@@ -120,7 +120,7 @@ alias gf="git fetch --all --prune"
 alias gdw="git diff --color-words"
 alias gdww="git diff --color-words='\w+|.' --ignore-space-change "
 alias gsww="git show --color-words='\w+|.' --ignore-space-change "
-alias gfm="git fetch origin master:master"
+alias gfm="git fetch origin $(git_main_branch):$(git_main_branch)"
 alias glgg="git log --graph --decorate"
 alias gstu="gsta -u"
 alias todos="git diff --unified=0 HEAD | grep -i todo"
@@ -137,5 +137,9 @@ export WORKON_HOME=$HOME/.virtualenvs
 VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
 . /usr/local/bin/virtualenvwrapper.sh
 
-export DISPLAY1=DP-2
-export DISPLAY2=DP-3
+export DISPLAY1=$(xrandr | grep ' connected' | awk '{print $1}' | sed -n '3 p')
+export DISPLAY2=$(xrandr | grep ' connected' | awk '{print $1}' | sed -n '2 p')
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
