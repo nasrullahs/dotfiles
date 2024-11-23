@@ -1,8 +1,8 @@
 [user]
-	email = nasrullah@rtr.ai
+	email = nasrullahs@gmail.com
 	name = Nasrullah Taha
 [core]
-	excludesfile = /home/nasrullah/.gitignore_global
+	excludesfile = ~/.gitignore_global
 	editor = emacs -nw
 	pager = ~/.local/bin/diff-highlight | less -R
 [push]

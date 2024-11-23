@@ -9,14 +9,16 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-set $DISPLAY1 DP-2
-set $DISPLAY2 DP-3
+set_from_resource $DISPLAY1 echo "$DISPLAY1"
+set_from_resource $DISPLAY2 echo "$DISPLAY2"
 
-exec redshift
-exec setxkbmap dvorak; xset r rate 270 50
+exec redshift -l 53:-114 -t 6500:5200
+exec setxkbmap  -option ctrl:nocaps -option altwin:swap_alt_win; xset r rate 270 50
 exec xset b off
+exec nm-applet
+exec blueman-applet
 
-include ~/.config/i3/local_config
+#include ~/.config/i3/local_config
 
 set $mod Mod4
 
@@ -104,16 +106,16 @@ set $workspace8 "8"
 set $workspace9 "9"
 set $workspace10 "10"
 
-workspace 1 output $DISPLAY1
-workspace 2 output $DISPLAY1
-workspace 3 output $DISPLAY1
-workspace 4 output $DISPLAY1
-workspace 5 output $DISPLAY1
-workspace 6 output $DISPLAY2
-workspace 7 output $DISPLAY2
-workspace 8 output $DISPLAY2
-workspace 9 output $DISPLAY2
-workspace 10 output $DISPLAY2
+workspace $workspace1 output $DISPLAY1
+workspace $workspace2 output $DISPLAY1
+workspace $workspace3 output $DISPLAY1
+workspace $workspace4 output $DISPLAY1
+workspace $workspace5 output $DISPLAY1
+workspace $workspace6 output $DISPLAY2
+workspace $workspace7 output $DISPLAY2
+workspace $workspace8 output $DISPLAY2
+workspace $workspace9 output $DISPLAY2
+workspace $workspace10 output $DISPLAY2
 
 # switch to workspace
 bindsym $mod+1 workspace $workspace1
@@ -179,13 +181,11 @@ bindsym $mod+r mode "resize"
 
 bar {
     status_command i3blocks
-    tray_output $DISPLAY1
+#    tray_output $DISPLAY1
 }
 
 focus_follows_mouse no
 mouse_warping none
-
-#exec "~/.local/bin/setup-multiple-monitors"
 
 bindsym $mod+Shift+Left move workspace to output left
 bindsym $mod+Shift+Down move workspace to output down
@@ -195,19 +195,23 @@ bindsym $mod+Shift+Right move workspace to output right
 bindsym $mod+l exec "~/.local/bin/screen-lock"
 bindsym shift+$mod+l exec "~/.local/bin/suspend"
 
-exec --no-startup-id /usr/bin/feh --randomize --bg-fill ~/Pictures/wallpapers/*
+exec --no-startup-id "~/.local/bin/set-wallpaper"
 
-exec --no-startup-id /usr/bin/slack
+bindsym XF86AudioMute exec amixer sset Master toggle && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+ && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioLowerVolume exec amixer sset Master 5%- && pkill -RTMIN+10 i3blocks
 
-bindsym XF86AudioRaiseVolume exec amixer -D pulse sset Master 5%+ && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume exec amixer -D pulse sset Master 5%- && pkill -RTMIN+10 i3blocks
-
-bindsym XF86MonBrightnessUp exec brightnessctl s 5%+
+bindsym XF86MonBrightnessUp exec brightnessctl s 2%+
 bindsym XF86MonBrightnessDown exec brightnessctl s 5%-
 
+bindsym XF86Display exec xrandr --auto
+bindsym F7 exec xrandr --auto
+bindsym shift+XF86Display exec setup-multiple-monitors
+bindsym shift+F7 exec setup-multiple-monitors
+
 # Scratchpad
-#bindsym $mod+Shift+asciitilde move scratchpad
-#bindsym $mod+grave scratchpad show
+bindsym $mod+Shift+asciitilde move scratchpad
+bindsym $mod+grave scratchpad show
 bindsym $mod+Shift+Escape move scratchpad
 bindsym $mod+Escape scratchpad show
 for_window [class="slack"] move container to workspace scratchpad

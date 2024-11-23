@@ -1,1 +1,4 @@
+xrandr --auto
+sleep 1
+
 systemctl suspend && ~/.local/bin/screen-lock
