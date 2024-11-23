@@ -73,4 +73,4 @@ if ! i3lock -e -n "${PARAM[@]}" -i "$IMAGE" > /dev/null 2>&1; then
     i3lock -e -n -i "$IMAGE"
 fi
 
-/usr/bin/feh --randomize --bg-fill ~/Pictures/wallpapers/*
+set-wallpaper
