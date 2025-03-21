@@ -1,4 +1,4 @@
-xrandr --auto
+setup-multiple-monitors 1
 sleep 1
 
 systemctl suspend && ~/.local/bin/screen-lock

@@ -2,18 +2,26 @@
 
 xrandr --auto
 
-NUM_MONITORS="$(xrandr | grep ' connected' | wc -l)"
+NUM_MONITORS=$(xrandr | grep ' connected' | wc -l)
 DISPLAY1=$(xrandr | grep ' connected' | awk '{print $1}' | sed -n '3 p')
 DISPLAY2=$(xrandr | grep ' connected' | awk '{print $1}' | sed -n '2 p')
 
-if [ $NUM_MONITORS -eq 3 ]
-then
-    # 2 external monitors
-    xrandr --output eDP-1 --off
-    xrandr --output $DISPLAY1 --mode 3840x2160
-    xrandr --output $DISPLAY2 --mode 3840x2160
-    xrandr --output $DISPLAY2 --right-of $DISPLAY1
-    xrandr --dpi 160
+if [ -z "$1" ]; then
+    if [ $NUM_MONITORS -eq 3 ]; then
+        # 2 external monitors
+        xrandr --output eDP-1 --off
+        xrandr --output $DISPLAY1 --mode 3840x2160
+        xrandr --output $DISPLAY2 --mode 3840x2160
+        xrandr --output $DISPLAY2 --right-of $DISPLAY1
+    fi
+
+else
+    xrandr --output eDP-1
+    xrandr --output $DISPLAY1 --off
+    xrandr --output $DISPLAY2 --off
 fi
 
+xrandr --dpi 150
+
 set-wallpaper
+setxkbmap  -option ctrl:nocaps -option altwin:swap_alt_win && xset r rate 270 50
