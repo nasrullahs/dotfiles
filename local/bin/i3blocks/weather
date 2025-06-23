@@ -31,7 +31,7 @@ WEATHER_ICONS = {
     "thunderysnowshowers": '<span foreground="#3399FF">' + u"⛈" + '</span>',
 }
 
-WEATHER_URL="https://wttr.in/Edmonton?format=j1"
+WEATHER_URL="https://wttr.in/?format=j1"
 
 def temp_to_colour(temp):
     if temp < -20:

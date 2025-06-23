@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sudo apt install i3 i3blocks dmenu feh xautolock redshift redshift-gtk zsh git ripgrep tree xclip xsel htop ipython3 scrot colordiff emacs global imagemagick scrot brightnessctl debian-goodies python3-pip
+sudo apt install i3 i3blocks dmenu feh xautolock redshift redshift-gtk zsh git ripgrep tree xclip xsel htop ipython3 scrot colordiff emacs global imagemagick scrot brightnessctl debian-goodies python3-pip foliate
 
 cd ~
 
@@ -26,8 +26,12 @@ ln -s ~/Projects/dotfiles/gitignore_global ~/.gitignore_global
 mkdir -p ~/.local/
 ln -s ~/Projects/dotfiles/local/bin ~/.local/
 
+ln -s ~/Projects/dotfiles/config/keymapper.conf ~/.config/keymapper.conf
+
 # ln -s ~/Projects/dotfiles/Xresources ~/.Xresources
 
 # make brightnessctl not require sudo
 sudo usermod -aG video ${USER}
 sudo chmod +s $(which brightnessctl)
+
+# manually install keymapper from https://github.com/houmain/keymapper

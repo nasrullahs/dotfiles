@@ -24,4 +24,4 @@ fi
 xrandr --dpi 150
 
 set-wallpaper
-setxkbmap  -option ctrl:nocaps -option altwin:swap_alt_win && xset r rate 270 50
+xset r rate 270 50

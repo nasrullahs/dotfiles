@@ -13,7 +13,8 @@ set_from_resource $DISPLAY1 echo "$DISPLAY1"
 set_from_resource $DISPLAY2 echo "$DISPLAY2"
 
 exec redshift -l 53:-114 -t 6500:5200
-exec setxkbmap  -option ctrl:nocaps -option altwin:swap_alt_win; xset r rate 270 50
+exec keymapper
+exec setxkbmap; xset r rate 270 50
 exec xset b off
 exec nm-applet
 exec blueman-applet
@@ -196,12 +197,13 @@ bindsym $mod+l exec "~/.local/bin/screen-lock"
 bindsym shift+$mod+l exec "~/.local/bin/suspend"
 
 exec --no-startup-id "~/.local/bin/set-wallpaper"
+exec --no-startup-id xautolock -time 8 -locker ~/.local/bin/screen-lock -corners ----
 
 bindsym XF86AudioMute exec amixer sset Master toggle && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+ && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioLowerVolume exec amixer sset Master 5%- && pkill -RTMIN+10 i3blocks
 
-bindsym XF86MonBrightnessUp exec brightnessctl s 2%+
+bindsym XF86MonBrightnessUp exec brightnessctl s 1%+
 bindsym XF86MonBrightnessDown exec brightnessctl s 5%-
 
 bindsym XF86Display exec xrandr --auto

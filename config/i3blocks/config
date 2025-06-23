@@ -30,7 +30,7 @@ separator_block_width=15
 markup=none
 
 [weather]
-command=~/.local/bin/weather
+command=~/.local/bin/i3blocks/weather
 interval=900
 color=#AAAAAA
 markup=pango
