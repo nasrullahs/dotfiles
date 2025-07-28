@@ -198,6 +198,8 @@ bindsym shift+$mod+l exec "~/.local/bin/suspend"
 
 exec --no-startup-id "~/.local/bin/set-wallpaper"
 exec --no-startup-id xautolock -time 8 -locker ~/.local/bin/screen-lock -corners ----
+exec --no-startup-id ~/.local/bin/xrandr-watcher.sh
+
 
 bindsym XF86AudioMute exec amixer sset Master toggle && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+ && pkill -RTMIN+10 i3blocks

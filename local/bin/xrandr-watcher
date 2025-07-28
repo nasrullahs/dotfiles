@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Detect environment
+export DISPLAY=${DISPLAY:-:0}
+export XAUTHORITY=$(find /run/user/$(id -u)/ -maxdepth 2 -name Xauthority 2>/dev/null | head -n 1)
+
+# fallback if empty
+if [[ -z "$XAUTHORITY" ]]; then
+    export XAUTHORITY="$HOME/.Xauthority"
+fi
+
+PREV_EXTERNAL=""
+
+while true; do
+    XRANDR_OUTPUT=$(xrandr --current | grep " connected" | grep -v "eDP")
+    if [[ -n "$XRANDR_OUTPUT" ]]; then
+        CURRENT_EXTERNAL="connected"
+    else
+        CURRENT_EXTERNAL="disconnected"
+    fi
+
+    if [[ "$CURRENT_EXTERNAL" != "$PREV_EXTERNAL" ]]; then
+        if [[ "$CURRENT_EXTERNAL" == "connected" ]]; then
+            notify-send "External display connected"
+        else
+            notify-send "External display disconnected"
+        fi
+
+        setup-multiple-monitors
+
+        PREV_EXTERNAL="$CURRENT_EXTERNAL"
+    fi
+
+    sleep 3
+done
