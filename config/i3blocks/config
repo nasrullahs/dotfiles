@@ -32,31 +32,22 @@ markup=none
 [weather]
 command=~/.local/bin/i3blocks/weather
 interval=900
-color=#AAAAAA
 markup=pango
 
 [ssid]
-label=W:
-instance=wlp0s20f3
-command=/usr/sbin/iwgetid -r
+label=📡
+command=nmcli -t -f active,ssid dev wifi | egrep '^yes' | cut -d\: -f2
 interval=10
 separator=false
 
 [wifi]
 command=~/.local/bin/i3blocks/wifi
-instance=wlp0s20f3
+instance=wlp9s0f0
 interval=10
 
-[iface]
-label=💻
-interval=10
-
-# Memory usage
-[memory]
-command=~/.local/bin/i3blocks/memory
-label=🐏
-interval=30
-markup=pango
+# [iface]
+# label=💻
+# interval=10
 
 # # Network interface monitoring
 # #
@@ -72,6 +63,13 @@ markup=pango
 # #instance=eth0
 # interval=5
 
+# Memory usage
+[memory]
+command=~/.local/bin/i3blocks/memory
+label=🐏
+interval=30
+markup=pango
+
 
 [load_average]
 label=⚙️
@@ -82,7 +80,6 @@ interval=10
 # The battery instance defaults to 0.
 [battery]
 command=~/.local/bin/i3blocks/battery.py
-label=🔋
 #instance=1
 interval=30
 markup=pango
