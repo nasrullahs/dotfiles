@@ -12,7 +12,7 @@
 set_from_resource $DISPLAY1 echo "$DISPLAY1"
 set_from_resource $DISPLAY2 echo "$DISPLAY2"
 
-exec redshift -l 53:-114 -t 6500:5200
+exec redshift -l $(curl -s ipinfo.io/loc | tr ',' ':') -t 6500:5200
 exec keymapper
 exec setxkbmap; xset r rate 270 50
 exec xset b off

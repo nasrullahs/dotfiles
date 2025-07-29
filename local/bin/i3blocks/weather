@@ -1,37 +1,40 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 import requests
 
+
 WEATHER_ICONS = {
-    "unknown": u" ", #u"✨",
-    "sunny": '<span foreground="yellow">' + u"☀️" + '</span>',
-    "clear": '<span foreground="yellow">' + u"☀️" + '</span>',
-    "overcast": u"☁️",
-    "partlycloudy": '<span foreground="yellow">' + u"⛅️" + '</span>',
-    "cloudy": u"☁️",
-    "verycloudy": '<span foreground="gray">' + u"☁️" + '</span>',
-    "mist": u"🌁",
-    "fog": u"🌁",
-    "haze": u"🌁",
-    "rain": '<span foreground="#77BBFF">' + u"🌦" + '</span>',
-    "lightrain": '<span foreground="#77BBFF">' + u"🌦" + '</span>',
-    "heavyrain": '<span foreground="#3399FF">' + u"🌧" + '</span>',
-    "thunderyheavyrain": '<span foreground="#3399FF">' + u"🌩" + '</span>',
-    "lightshowers": '<span foreground="77BBFF">' + u"🌦" + '</span>',
-    "heavyshowers": '<span foreground="#3399FF">' + u"🌧" + '</span>',
-    "snow": '<span foreground="white">' + u"🌨" + '</span>',
-    "lightsnow": u"🌨",
-    "heavysnow": '<span foreground="white">' + u"❄️" + '</span>',
-    "lightsnowshowers": '<span foreground="#77BBFF">' + u"🌨" + '</span>',
-    "heavysnowshowers": '<span foreground="#77BBFF">' + u"❄️" + '</span>',
-    "lightsleet": u"🌧",
-    "lightsleetshowers": u"🌧",
-    "thunderyshowers": '<span foreground="#3399FF">' + u"⛈" + '</span>',
-    "thunderysnowshowers": '<span foreground="#3399FF">' + u"⛈" + '</span>',
+    "clear": '<span foreground="yellow">☀️</span>',
+    "mainly_clear": '<span foreground="yellow">☀️</span>',
+    "partly_cloudy": '<span foreground="yellow">⛅️</span>',
+    "overcast": '<span foreground="gray">☁️</span>',
+    "fog": '🌁',
+    "drizzle": '<span foreground="#77BBFF">🌦</span>',
+    "rain": '<span foreground="#3399FF">🌧</span>',
+    "freezing_rain": '<span foreground="white">🌧</span>',
+    "snow": '<span foreground="white">🌨</span>',
+    "thunderstorm": '<span foreground="#3399FF">⛈</span>',
+    "unknown": '✨',
 }
 
-WEATHER_URL="https://wttr.in/?format=j1"
+WEATHER_CODES = {
+    0: "clear",
+    1: "mainly_clear",
+    2: "partly_cloudy",
+    3: "overcast",
+    45: "fog",
+    48: "fog",
+    51: "drizzle", 53: "drizzle", 55: "drizzle",
+    56: "freezing_rain", 57: "freezing_rain",
+    61: "rain", 63: "rain", 65: "rain",
+    66: "freezing_rain", 67: "freezing_rain",
+    71: "snow", 73: "snow", 75: "snow", 77: "snow",
+    80: "rain", 81: "rain", 82: "rain",
+    85: "snow", 86: "snow",
+    95: "thunderstorm", 96: "thunderstorm", 99: "thunderstorm",
+}
 
 def temp_to_colour(temp):
     if temp < -20:
@@ -45,70 +48,82 @@ def temp_to_colour(temp):
     else:
         return '#AAAAAA'
 
-def wind_to_colour(wind_speed):
-    if wind_speed > 45:
+def wind_to_colour(speed):
+    if speed > 45:
         return 'red'
-    elif wind_speed > 25:
+    elif speed > 25:
         return '#CC6666'
-    elif wind_speed > 8:
+    elif speed > 8:
         return '#AAAAAA'
     else:
         return '#555555'
 
-def precip_to_colour(precipitation_amount):
-    if precipitation_amount > 20.0:
+def precip_to_colour(p):
+    if p > 20.0:
         return 'red'
-    elif precipitation_amount > 7.6:
+    elif p > 7.6:
         return '#5484F4'
-    elif precipitation_amount > 2.5:
+    elif p > 2.5:
         return '#7492C4'
-    elif precipitation_amount > 0:
+    elif p > 0:
         return '#557799'
     else:
         return '#555555'
 
-def main():
-    response = requests.get(WEATHER_URL)
-    response = response.json()
+def wind_arrow(deg):
+    deg = (deg + 180) % 360
+    arrows = ["↑", "↗", "→", "↘", "↓", "↙", "←", "↖"]
+    idx = round(deg / 45) % 8
+    return arrows[idx]
 
-    location = response['nearest_area'][0]['areaName'][0]['value']
+ipinfo = requests.get("https://ipinfo.io/json").json()
+lat, lon = ipinfo["loc"].split(",")
+city = ipinfo.get("city", "Unknown")
 
-    description = response['current_condition'][0]['weatherDesc'][0]['value'].lower().replace(' ', '')
-    icon = WEATHER_ICONS.get(description) or WEATHER_ICONS['unknown']
+now = datetime.utcnow().isoformat(timespec='minutes')
+url = (
+    f"https://api.open-meteo.com/v1/forecast"
+    f"?latitude={lat}&longitude={lon}"
+    f"&current_weather=true"
+    f"&hourly=apparent_temperature,precipitation"
+    f"&daily=temperature_2m_max,temperature_2m_min"
+    f"&timezone=auto"
+)
+res = requests.get(url).json()
 
-    temperature = int(response['current_condition'][0]['temp_C'])
+current = res["current_weather"]
+code = WEATHER_CODES.get(current["weathercode"], "unknown")
+icon = WEATHER_ICONS.get(code, WEATHER_ICONS["unknown"])
 
-    feels_like = int(response['current_condition'][0]['FeelsLikeC'])
+temp = current["temperature"]
+wind_speed = current["windspeed"]
+wind_dir = current["winddirection"]
+current_time = current["time"]
 
-    wind_speed = int(response['current_condition'][0]['windspeedKmph'])
-    wind_direction = response['current_condition'][0]['winddir16Point']
+cur_dt = datetime.strptime(current_time, "%Y-%m-%dT%H:%M")
+hourly_times = [datetime.strptime(t, "%Y-%m-%dT%H:%M") for t in res["hourly"]["time"]]
+idx = max(i for i, t in enumerate(hourly_times) if t <= cur_dt)
+feels_like = res["hourly"]["apparent_temperature"][idx]
+precip = res["hourly"]["precipitation"][idx]
 
-    precipitation = float(response['current_condition'][0]['precipMM'])
+high = res["daily"]["temperature_2m_max"][0]
+low = res["daily"]["temperature_2m_min"][0]
 
-    print(
-        '{location}'
-        '<span foreground="#555555" letter_spacing="5000">|</span>'
-        '{icon} '
-        '<span foreground="{temp_colour}">{temperature} °C</span> '
-        '(<span foreground="{feels_like_colour}">{feels_like} °C</span>)'
-        '<span foreground="#555555" letter_spacing="5000">|</span>'
-        '<span foreground="{wind_colour}">{wind_speed} km/h {wind_direction}</span>'
-        '<span foreground="#555555" letter_spacing="5000">|</span>'
-        '<span foreground="{precip_colour}">💧 {precipitation}</span>'\
-        .format(
-            location=location,
-            icon=icon,
-            temperature=temperature,
-            temp_colour=temp_to_colour(temperature),
-            feels_like=feels_like,
-            feels_like_colour=temp_to_colour(feels_like),
-            wind_speed=wind_speed,
-            wind_direction=wind_direction,
-            wind_colour=wind_to_colour(wind_speed),
-            precipitation=precipitation,
-            precip_colour=precip_to_colour(precipitation),
-        )
-    )
+temp_col = temp_to_colour(temp)
+feels_col = temp_to_colour(feels_like)
+wind_col = wind_to_colour(wind_speed)
+precip_col = precip_to_colour(precip)
 
-if __name__ == '__main__':
-    main()
+print(
+     f"{city}"
+     "<span foreground='#555555' letter_spacing='5000'>|</span>"
+     f"{icon} "
+     f"<span foreground='{temp_col}'>{temp:.0f}°C</span> "
+     f"(<span foreground='{feels_col}'>{feels_like:.0f}°C</span>)"
+     "<span foreground='#555555' letter_spacing='5000'>|</span>"
+     f"🌡️<span foreground='#DD4444'>🠩</span>{high:.0f}°C <span foreground='#2222FF'>🠫</span>{low:.0f}°C"
+     "<span foreground='#555555' letter_spacing='5000'>|</span>"
+     f"<span foreground='{wind_col}'>💨 {wind_speed:.0f} km/h {wind_arrow(wind_dir)}</span>"
+     "<span foreground='#555555' letter_spacing='5000'>|</span>"
+     f"<span foreground='{precip_col}'>🌧️ {precip:.1f} mm</span>"
+)
