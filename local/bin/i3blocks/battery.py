@@ -73,8 +73,20 @@ else:
             return "#FFFF66"
         return "#FFFFFF"
 
-    form =  '<span color="{}">{}%</span>'
-    fulltext += form.format(color(percentleft, state), percentleft)
+    def battery_icon(percent):
+        if percentleft <= 10:
+            return '\uf244'  # empty
+        elif percentleft <= 30:
+            return '\uf243'  # quarter
+        elif percentleft <= 60:
+            return '\uf242'  # half
+        elif percentleft <= 90:
+            return '\uf241'  # three-quarters
+        else:
+            return '\uf240'  # full
+
+    form = '<span font="FontAwesome">{}</span> <span color="{}">{}%</span>'
+    fulltext += form.format(battery_icon(percentleft), color(percentleft, state), percentleft)
     fulltext += timeleft
 
 print(fulltext)
