@@ -15,9 +15,10 @@ set_from_resource $DISPLAY2 echo "$DISPLAY2"
 exec redshift -l $(curl -s ipinfo.io/loc | tr ',' ':') -t 6500:5200
 exec keymapper
 exec setxkbmap; xset r rate 270 50
-exec xset b off
+exec xset b off  # keyboard beep off
 exec nm-applet
 exec blueman-applet
+exec xset s 300 5  # screen saver timeout
 
 #include ~/.config/i3/local_config
 
@@ -197,9 +198,8 @@ bindsym $mod+l exec "~/.local/bin/screen-lock"
 bindsym shift+$mod+l exec "~/.local/bin/suspend"
 
 exec --no-startup-id "~/.local/bin/set-wallpaper"
-exec --no-startup-id xautolock -time 8 -locker ~/.local/bin/screen-lock -corners ----
-exec --no-startup-id ~/.local/bin/xrandr-watcher.sh
-
+exec --no-startup-id ~/.local/bin/xrandr-watcher
+exec --no-startup-id xss-lock -n /usr/libexec/xsecurelock/dimmer -l -- xsecurelock
 
 bindsym XF86AudioMute exec amixer sset Master toggle && pkill -RTMIN+10 i3blocks
 bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+ && pkill -RTMIN+10 i3blocks
