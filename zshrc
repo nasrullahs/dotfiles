@@ -112,8 +112,6 @@ alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
 
 alias cds="cd ~/src/"
-alias cdp="cd ~/src/mfp/"
-alias cdui="cd ~/src/mfp-ui/"
 
 alias g="gst"
 alias gf="git fetch --all --prune"

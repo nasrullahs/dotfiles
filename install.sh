@@ -36,10 +36,3 @@ sudo usermod -aG video ${USER}
 sudo chmod +s $(which brightnessctl)
 
 # manually install keymapper from https://github.com/houmain/keymapper
-
-# THINKPAD FINGERPRINT READER SUPPORT
-sudo apt install fprintd libpam-fprintd xsecurelock
-# sudo fprintd-enroll $USER -f right-index-finger
-
-# add to top of /etc/pam.d/common-auth:
-# auth    [success=1 default=ignore]  pam_fprintd.so max_tries=3 timeout=10
