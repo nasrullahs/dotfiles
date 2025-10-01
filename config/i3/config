@@ -208,6 +208,8 @@ bindsym XF86AudioLowerVolume exec amixer sset Master 5%- && pkill -RTMIN+10 i3bl
 bindsym XF86MonBrightnessUp exec brightnessctl s 1%+
 bindsym XF86MonBrightnessDown exec brightnessctl s 5%-
 
+bindsym --release Print exec "scrot -s ~/Pictures/screenshot_%Y-%m-%d_%H-%M-%S.png"
+
 bindsym XF86Display exec xrandr --auto
 bindsym F7 exec xrandr --auto
 bindsym shift+XF86Display exec setup-multiple-monitors
