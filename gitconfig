@@ -4,7 +4,7 @@
 [core]
 	excludesfile = ~/.gitignore_global
 	editor = emacs -nw
-	pager = ~/.local/bin/diff-highlight | less -R
+	pager = delta --paging=always
 [push]
 	default = simple
 [filter "lfs"]
@@ -14,11 +14,6 @@
 	required = true
 [rerere]
 	enabled = true
-[color "diff-highlight"]
-	oldNormal = red bold
-	oldHighlight = red bold 52
-	newNormal = green bold
-	newHighlight = green bold 22
 [color "diff"]
 	meta = yellow
 	frag = magenta bold
@@ -37,3 +32,10 @@
 [credential "https://github.com"]
 	helper =
 	helper = !/usr/bin/gh auth git-credential
+[merge]
+	conflictStyle = zdiff3
+[delta]
+	line-numbers = true
+	navigate = true
+[interactive]
+	diffFilter = delta --color-only
