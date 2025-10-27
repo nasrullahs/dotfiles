@@ -144,6 +144,8 @@ bindsym $mod+Shift+8 move container to workspace $workspace8
 bindsym $mod+Shift+9 move container to workspace $workspace9
 bindsym $mod+Shift+0 move container to workspace $workspace10
 
+bindsym $mod+t workspace "Notes"
+bindsym $mod+Shift+t move container to workspace "Notes"
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -202,8 +204,8 @@ exec --no-startup-id "~/.local/bin/xrandr-watcher"
 exec --no-startup-id xautolock -time 8 -locker ~/.local/bin/screen-lock -corners ----
 
 bindsym XF86AudioMute exec amixer sset Master toggle && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioRaiseVolume exec amixer sset Master 5%+ && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume exec amixer sset Master 5%- && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioRaiseVolume exec amixer sset Master 1%+ && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioLowerVolume exec amixer sset Master 1%- && pkill -RTMIN+10 i3blocks
 
 bindsym XF86MonBrightnessUp exec brightnessctl s 1%+
 bindsym XF86MonBrightnessDown exec brightnessctl s 5%-
@@ -216,8 +218,10 @@ bindsym shift+XF86Display exec setup-multiple-monitors
 bindsym shift+F7 exec setup-multiple-monitors
 
 # Scratchpad
-bindsym $mod+Shift+asciitilde move scratchpad
-bindsym $mod+grave scratchpad show
-bindsym $mod+Shift+Escape move scratchpad
-bindsym $mod+Escape scratchpad show
-for_window [class="slack"] move container to workspace scratchpad
+bindsym $mod+Shift+asciitilde mark slack; move to scratchpad
+bindsym $mod+grave [con_mark="slack"] scratchpad show
+bindsym $mod+Shift+Escape mark slack; move to scratchpad
+bindsym $mod+Escape [con_mark="slack"] scratchpad show
+
+bindsym $mod+Shift+m mark music; move to scratchpad
+bindsym $mod+m [con_mark="music"] scratchpad show
