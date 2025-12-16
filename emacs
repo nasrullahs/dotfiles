@@ -54,10 +54,6 @@ nil)))
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- ;; '(custom-enabled-themes (quote (darcula)))
- ;; '(custom-safe-themes
- ;;   (quote
- ;;    ("41c8c11f649ba2832347fe16fe85cf66dafe5213ff4d659182e25378f9cfc183" "3d5720f488f2ed54dd4e40e9252da2912110948366a16aef503f3e9e7dfe4915" "7bc31a546e510e6bde482ebca992e293a54cb075a0cbfb384bf2bf5357d4dee3" "fad38808e844f1423c68a1888db75adf6586390f5295a03823fa1f4959046f81" "c697b65591ba1fdda42fae093563867a95046466285459bd4e686dc95a819310" default)))
  '(global-auto-revert-mode t)
  '(ido-mode t nil (ido))
  '(indent-tabs-mode nil)
@@ -65,22 +61,26 @@ nil)))
  '(js-indent-level 2)
  '(menu-bar-mode nil)
  '(package-selected-packages
-   (quote
-    (add-node-modules-path phi-search phi-search-mc lsp-mode use-package multiple-cursors helm-ls-git darcula-theme)))
+   '(org-modern add-node-modules-path phi-search phi-search-mc lsp-mode use-package multiple-cursors helm-ls-git darcula-theme))
  '(scroll-bar-mode nil)
  '(show-paren-mode 1)
  '(tab-width 4)
  '(tool-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (electric-indent-mode -1)
 
 (setq column-number-mode t)
+
+;; org mode improvements
+(with-eval-after-load 'org (global-org-modern-mode))
+
+(custom-set-faces
+ '(org-level-1 ((t (:foreground "#e06c75" :weight bold :height 1.3))))
+ '(org-level-2 ((t (:foreground "#98c379" :weight bold :height 1.2))))
+ '(org-level-3 ((t (:foreground "#61afef" :weight bold :height 1.15))))
+ '(org-level-4 ((t (:foreground "#c678dd" :weight bold :height 1.1)))))
+
 
 ;; Makes *scratch* empty.
 (setq initial-scratch-message "")
