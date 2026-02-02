@@ -3,5 +3,6 @@ Xft.antialias: true
 Xft.hinting:   true
 Xft.rgba:      rgb
 Xft.hintstyle: hintfull
+Xft.lcdfilter: lcddefault
 Xft.dpi:       150
 ! }}}

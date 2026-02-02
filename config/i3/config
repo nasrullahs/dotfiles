@@ -9,8 +9,8 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-set_from_resource $DISPLAY1 echo "$DISPLAY1"
-set_from_resource $DISPLAY2 echo "$DISPLAY2"
+set $DISPLAY1 DP-2-2-1
+set $DISPLAY2 DP-1-1-1
 
 exec redshift -l $(curl -s ipinfo.io/loc | tr ',' ':') -t 6500:5200
 exec keymapper
@@ -184,8 +184,9 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 
 bar {
+    font pango:DejaVu Sans Mono 9
     status_command i3blocks
-#    tray_output $DISPLAY1
+    tray_output primary
 }
 
 focus_follows_mouse no

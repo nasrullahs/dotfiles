@@ -10,18 +10,27 @@ if [ -z "$1" ]; then
     if [ $NUM_MONITORS -eq 3 ]; then
         # 2 external monitors
         xrandr --output eDP-1 --off
-        xrandr --output $DISPLAY1 --mode 3840x2160
-        xrandr --output $DISPLAY2 --mode 3840x2160
-        xrandr --output $DISPLAY2 --right-of $DISPLAY1
+        xrandr --output $DISPLAY1 --auto --primary
+        xrandr --output $DISPLAY2 --auto --right-of $DISPLAY1
+    elif [ $NUM_MONITORS -eq 2 ]; then
+        # 1 external monitor above laptop
+        xrandr --output eDP-1 --primary
+        xrandr --output $DISPLAY2 --auto --above eDP-1
+    elif [ $NUM_MONITORS -eq 1 ]; then
+        # laptop only
+        xrandr --output eDP-1 --primary
     fi
 
 else
-    xrandr --output eDP-1
-    xrandr --output $DISPLAY1 --off
-    xrandr --output $DISPLAY2 --off
+    xrandr --output eDP-1 --primary
+    [ -n "$DISPLAY1" ] && xrandr --output $DISPLAY1 --off
+    [ -n "$DISPLAY2" ] && xrandr --output $DISPLAY2 --off
 fi
 
 xrandr --dpi 150
 
 set-wallpaper
 xset r rate 270 50
+
+[ -n "$DISPLAY1" ] && sed -i "s/^set \$DISPLAY1 .*/set \$DISPLAY1 $DISPLAY1/" ~/Projects/dotfiles/config/i3/config
+[ -n "$DISPLAY2" ] && sed -i "s/^set \$DISPLAY2 .*/set \$DISPLAY2 $DISPLAY2/" ~/Projects/dotfiles/config/i3/config

@@ -123,6 +123,37 @@ alias glgg="git log --graph --decorate"
 alias gstu="gsta -u"
 alias todos="git diff --unified=0 HEAD | grep -i todo"
 
+gfall() {
+  find "${1:-.}" -mindepth 2 -maxdepth 2 -name ".git" -type d \
+    | xargs -I{} dirname {} \
+    | while IFS= read -r repo; do
+        echo "\n======================== $repo ========================"
+        (
+          cd "$repo"
+          git fetch --all --prune
+          main=$(git_main_branch)
+          current=$(git symbolic-ref --short HEAD 2>/dev/null)
+          if [ "$current" = "$main" ]; then
+            echo ">>> on $main, pulling..."
+            git pull
+          else
+            echo ">>> on $current, fast-forwarding $main..."
+            git fetch origin "$main:$main"
+          fi
+          git status
+          echo
+        )
+      done
+}
+
+gdours() {
+  git diff --ignore-all-space ":1:$1" ":2:$1"
+}
+
+gdtheirs() {
+  git diff --ignore-all-space ":1:$1" ":3:$1"
+}
+
 alias sag="sudo apt"
 alias sagi="sudo apt install"
 alias sagu="sudo apt update && sudo apt upgrade && sudo checkrestart"
