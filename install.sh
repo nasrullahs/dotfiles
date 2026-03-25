@@ -33,6 +33,7 @@ ln -s ~/Projects/dotfiles/local/bin/setup-multiple-monitors ~/.local/bin/setup-m
 ln -s ~/Projects/dotfiles/local/bin/set-wallpaper ~/.local/bin/set-wallpaper
 ln -s ~/Projects/dotfiles/local/bin/suspend ~/.local/bin/suspend
 ln -s ~/Projects/dotfiles/local/bin/xrandr-watcher ~/.local/bin/xrandr-watcher
+ln -s ~/Projects/dotfiles/local/bin/gup ~/.local/bin/gup
 
 ln -s ~/Projects/dotfiles/config/keymapper.conf ~/.config/keymapper.conf
 

@@ -1,0 +1,261 @@
+#!/usr/bin/env python3
+"""gup — fetch & update all git repos under a directory, display as a table."""
+
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+
+def strip_hashes(s: str) -> str:
+    """Remove commit-hash noise (e.g. 'abc1234..def5678 ') from git output."""
+    s = re.sub(r"[0-9a-f]{7,}\.{2,3}[0-9a-f]{7,}\s*", "", s)
+    s = re.sub(r"\b[0-9a-f]{7,}\b", "", s)
+    return s.strip()
+
+
+def run(cmd: list[str], cwd: Path) -> tuple[int, str, str]:
+    r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+    return r.returncode, r.stdout.strip(), r.stderr.strip()
+
+
+def get_main_branch(repo: Path) -> str | None:
+    """Return the main branch from origin/HEAD, or None if it can't be determined."""
+    _, remote_head, _ = run(["git", "rev-parse", "--abbrev-ref", "origin/HEAD"], cwd=repo)
+    if remote_head.startswith("origin/"):
+        return remote_head.removeprefix("origin/")
+    return None
+
+
+def get_local_branches(repo: Path) -> list[str]:
+    _, out, _ = run(["git", "branch", "--format=%(refname:short)"], cwd=repo)
+    return out.splitlines()
+
+
+def remote_ref_exists(repo: Path, branch: str) -> bool:
+    rc, _, _ = run(["git", "rev-parse", "--verify", f"origin/{branch}"], cwd=repo)
+    return rc == 0
+
+
+def get_upstream(repo: Path, branch: str) -> str | None:
+    """Return the configured upstream ref for a branch, or None if not set."""
+    _, upstream, _ = run(
+        ["git", "rev-parse", "--abbrev-ref", f"{branch}@{{upstream}}"], cwd=repo
+    )
+    if not upstream or upstream == f"{branch}@{{upstream}}":
+        return None
+    return upstream
+
+
+def ahead_behind(repo: Path, branch: str, upstream: str) -> tuple[int, int]:
+    _, a, _ = run(["git", "rev-list", "--count", f"{upstream}..{branch}"], cwd=repo)
+    _, b, _ = run(["git", "rev-list", "--count", f"{branch}..{upstream}"], cwd=repo)
+    try:
+        return int(a), int(b)
+    except ValueError:
+        return 0, 0
+
+
+def sync_repo(repo: Path) -> dict:
+    # ── fetch ─────────────────────────────────────────────────────────────
+    _, f_out, f_err = run(["git", "fetch", "--all", "--prune"], cwd=repo)
+    fetch_lines = (f_out or f_err).splitlines()
+    fetch_summary = ", ".join(
+        strip_hashes(l) for l in fetch_lines
+        if l.strip() and not l.strip().startswith("From ")
+    ) or "up to date"
+
+    # ── current branch & main ─────────────────────────────────────────────
+    main = get_main_branch(repo)
+    _, branch, _ = run(["git", "symbolic-ref", "--short", "HEAD"], cwd=repo)
+    branch = branch or "DETACHED"
+
+    # ── sync action ───────────────────────────────────────────────────────
+    if main is None:
+        sync = "error: can't determine main (run: git remote set-head origin -a)"
+    else:
+        main_has_upstream = remote_ref_exists(repo, main)
+        if branch == main and main_has_upstream:
+            _, p_out, p_err = run(["git", "pull", "--ff-only"], cwd=repo)
+            pull_line = (p_out or p_err).splitlines()
+            sync = "pull: " + strip_hashes(pull_line[0]) if pull_line else "pull: done"
+        elif main_has_upstream:
+            rc, _, ff_err = run(["git", "fetch", "origin", f"{main}:{main}"], cwd=repo)
+            sync = f"ff {main}" + (f" ({strip_hashes(ff_err.splitlines()[0])})" if rc != 0 and ff_err else "")
+        else:
+            sync = f"no upstream for {main}"
+
+    # ── ahead / behind per local branch ───────────────────────────────────
+    ab_parts = []
+    for b in get_local_branches(repo):
+        upstream = get_upstream(repo, b)
+        if upstream is None:
+            ab_parts.append(f"{b}: (no remote)")
+        else:
+            a, bh = ahead_behind(repo, b, upstream)
+            arrow = ("↑" + str(a) if a else "") + (" ↓" + str(bh) if bh else "")
+            ab_parts.append(f"{b}: {arrow.strip() or '='}")
+    divergence = ab_parts
+
+    # ── working tree status ───────────────────────────────────────────────
+    _, st_out, _ = run(["git", "status", "--short"], cwd=repo)
+    if st_out:
+        counts: dict[str, int] = {}
+        for line in st_out.splitlines():
+            code = line[:2].strip()
+            label = {"M": "modified", "A": "added", "D": "deleted",
+                     "R": "renamed", "C": "copied", "?": "untracked", "!": "ignored"}.get(code, code)
+            counts[label] = counts.get(label, 0) + 1
+        status = [f"{label}: {n}" for label, n in counts.items()]
+    else:
+        status = ["clean"]
+
+    return {
+        "repo":       repo.name,
+        "branch":     branch,
+        "fetch":      fetch_summary,
+        "sync":       sync,
+        "divergence": divergence,
+        "status":     status,
+    }
+
+
+def find_repos(root: Path) -> list[Path]:
+    return sorted(p.parent for p in root.glob("*/.git") if p.is_dir())
+
+
+# ── table renderer ────────────────────────────────────────────────────────────
+
+HEADERS = {
+    "repo":       "REPO",
+    "branch":     "BRANCH",
+    "fetch":      "FETCH",
+    "sync":       "SYNC",
+    "divergence": "AHEAD/BEHIND",
+    "status":     "STATUS",
+}
+
+MAX_WIDTHS = {
+    "repo":       30,
+    "branch":     20,
+    "fetch":      30,
+    "sync":       30,
+    "divergence": None,  # uncapped — branch names vary too much
+    "status":     None,
+}
+
+
+def trunc(s: str, max_w: int | None) -> str:
+    if max_w is None or len(s) <= max_w:
+        return s
+    return s[:max_w - 1] + "…"
+
+
+def col_width(key: str, rows: list[dict]) -> int:
+    w = len(HEADERS[key])
+    cap = MAX_WIDTHS[key]
+    for row in rows:
+        v = row[key]
+        lines = v if isinstance(v, list) else [v]
+        for l in lines:
+            w = max(w, len(trunc(l, cap)))
+    return w
+
+
+def fit_widths(widths: dict, term_width: int) -> dict:
+    """Shrink columns so the table fits within term_width.
+
+    Strategy: repeatedly shrink the widest column by 1 until it fits,
+    but never below a minimum of 8 chars (or the header length).
+    """
+    ncols = len(widths)
+    # overhead: leading '|' + trailing '|' + ' | ' between cols + ' ' padding each side
+    overhead = 1 + ncols * 3 + 1
+    mins = {k: max(8, len(HEADERS[k])) for k in widths}
+
+    while sum(widths.values()) + overhead > term_width:
+        # find widest column that is still above its minimum
+        shrinkable = {k: w for k, w in widths.items() if w > mins[k]}
+        if not shrinkable:
+            break
+        widest = max(shrinkable, key=shrinkable.get)
+        widths[widest] -= 1
+
+    return widths
+
+
+def make_divider(widths: dict) -> str:
+    return "+" + "+".join("-" * (w + 2) for w in widths.values()) + "+"
+
+
+def fmt_row(cells: list[str], widths: dict) -> str:
+    return "| " + " | ".join(f"{v:<{w}}" for v, w in zip(cells, widths.values())) + " |"
+
+
+def table_lines(rows: list[dict], widths: dict) -> list[str]:
+    sep = make_divider(widths)
+    lines = [sep, fmt_row(list(HEADERS.values()), widths), sep]
+    for row in rows:
+        cells = {k: (row[k] if isinstance(row[k], list) else [row[k]]) for k in HEADERS}
+        height = max(len(v) for v in cells.values())
+        for i in range(height):
+            line_cells = [
+                trunc(cells[k][i], widths[k]) if i < len(cells[k]) else ""
+                for k in HEADERS
+            ]
+            lines.append(fmt_row(line_cells, widths))
+        lines.append(sep)
+    return lines
+
+
+def _compute_widths(rows: list[dict]) -> dict:
+    widths = {k: col_width(k, rows) for k in HEADERS}
+    term_width = shutil.get_terminal_size(fallback=(200, 24)).columns
+    return fit_widths(widths, term_width)
+
+
+def print_table(rows: list[dict]) -> None:
+    for line in table_lines(rows, _compute_widths(rows)):
+        print(line)
+
+
+def _redraw_table(rows: list[dict], prev_lines: int) -> int:
+    lines = table_lines(rows, _compute_widths(rows))
+    if prev_lines:
+        sys.stdout.write(f"\033[{prev_lines}A")
+    for line in lines:
+        sys.stdout.write(f"\033[2K{line}\n")
+    sys.stdout.flush()
+    return len(lines)
+
+
+def _placeholder(repo: Path) -> dict:
+    return {
+        "repo": repo.name, "branch": "…", "fetch": "syncing…",
+        "sync": "…", "divergence": ["…"], "status": ["…"],
+    }
+
+
+def main():
+    root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path.cwd()
+    repos = find_repos(root)
+    if not repos:
+        print(f"No git repos found under {root}", file=sys.stderr)
+        sys.exit(1)
+
+    if not sys.stdout.isatty():
+        print_table([sync_repo(r) for r in repos])
+        return
+
+    rows: list[dict] = []
+    prev_lines = 0
+    for repo in repos:
+        rows.append(_placeholder(repo))
+        prev_lines = _redraw_table(rows, prev_lines)
+        rows[-1] = sync_repo(repo)
+        prev_lines = _redraw_table(rows, prev_lines)
+
+
+if __name__ == "__main__":
+    main()
