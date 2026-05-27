@@ -100,43 +100,43 @@ export EDITOR='emacs'
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
+# alias zshconfig='mate ~/.zshrc'
+# alias ohmyzsh='mate ~/.oh-my-zsh'
 
 alias diff='colordiff'
 
-alias weather="curl 'wttr.in?m' | less -S"
-alias idunno="echo '¯\_(ツ)_/¯' | pbcopy"
+alias weather='curl "wttr.in?m" | less -S'
+alias idunno='echo "¯\_(ツ)_/¯" | pbcopy'
 
 alias pbcopy='xsel --clipboard --input'
 alias pbpaste='xsel --clipboard --output'
 
 alias cds="cd ~/src/"
 
-alias g="gst"
-alias gf="git fetch --all --prune"
-alias gdw="git diff --color-words"
-alias gdww="git diff --color-words='\w+|.' --ignore-space-change "
-alias gsww="git show --color-words='\w+|.' --ignore-space-change "
-alias gfm="git fetch origin $(git_main_branch):$(git_main_branch)"
-alias glgg="git log --graph --decorate"
-alias gstu="gsta -u"
-alias todos="git diff --unified=0 HEAD | grep -i todo"
+alias g='gst'
+alias gf='git fetch --all --prune'
+alias gdw='git diff --color-words'
+alias gdww='git diff --color-words="\w+|." --ignore-space-change '
+alias gsww='git show --color-words="\w+|." --ignore-space-change '
+alias gfm='git fetch origin $(git_main_branch):$(git_main_branch)'
+alias glgg='git log --graph --decorate'
+alias gstu='gsta -u'
+alias todos='git diff --unified=0 HEAD | grep -i todo'
 
 gdours() {
-  git diff --ignore-all-space ":1:$1" ":2:$1"
+  git diff --ignore-all-space ':1:$1' ':2:$1'
 }
 
 gdtheirs() {
-  git diff --ignore-all-space ":1:$1" ":3:$1"
+  git diff --ignore-all-space ':1:$1' ':3:$1'
 }
 
-alias sag="sudo apt"
-alias sagi="sudo apt install"
-alias sagu="sudo apt update && sudo apt upgrade && sudo checkrestart"
-alias sacs="sudo apt search"
-alias pbcopy"xclip -selection clipboard"
-alias pbpaste="xclip -selection clipboard -o"
+alias sag='sudo apt'
+alias sagi='sudo apt install'
+alias sagu='sudo apt update && sudo apt upgrade && sudo checkrestart'
+alias sacs='sudo apt search'
+alias pbcopy'xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
 
 # Virtualenvwrapper settings:
 export WORKON_HOME=$HOME/.virtualenvs
