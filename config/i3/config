@@ -118,6 +118,7 @@ workspace $workspace7 output $DISPLAY2
 workspace $workspace8 output $DISPLAY2
 workspace $workspace9 output $DISPLAY2
 workspace $workspace10 output $DISPLAY2
+workspace "Notes" output $DISPLAY2
 
 # switch to workspace
 bindsym $mod+1 workspace $workspace1
