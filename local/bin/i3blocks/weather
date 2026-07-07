@@ -76,9 +76,19 @@ def wind_arrow(deg):
     idx = round(deg / 45) % 8
     return arrows[idx]
 
-ipinfo = requests.get("https://ipinfo.io/json").json()
-lat, lon = ipinfo["loc"].split(",")
-city = ipinfo.get("city", "Unknown")
+def geolocate():
+    # ipinfo.io geolocates to the ISP's registered city, which can be far off.
+    # ipwho.is is more accurate in practice; ip-api.com is the fallback.
+    try:
+        d = requests.get("https://ipwho.is/", timeout=5).json()
+        if d.get("success", True) and d.get("latitude") is not None:
+            return d["latitude"], d["longitude"], d.get("city", "Unknown")
+    except requests.RequestException:
+        pass
+    d = requests.get("http://ip-api.com/json", timeout=5).json()
+    return d["lat"], d["lon"], d.get("city", "Unknown")
+
+lat, lon, city = geolocate()
 
 now = datetime.utcnow().isoformat(timespec='minutes')
 url = (
