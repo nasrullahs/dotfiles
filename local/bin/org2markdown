@@ -1,0 +1,231 @@
+#!/usr/bin/env python3
+"""Convert Emacs Org mode on stdin to Markdown on stdout, for pasting into Confluence.
+
+The modern Confluence editor (Cloud / new Server-DC editor) converts *Markdown*
+to rich text -- it does NOT honour wiki markup, and pasting HTML just drops in
+literal tags. The Markdown conversion is only offered when the clipboard holds
+plain text, so copy this output as plain text (NOT text/html):
+
+    org2markdown < notes.org | xclip -selection clipboard
+
+Then in the Confluence page: paste without formatting (Ctrl+Shift+V) and choose
+"Use Markdown" from the paste-options popup. (Plain Ctrl+V then "Use Markdown"
+works too; typing Markdown also auto-converts.)
+
+Handles the common Org constructs (headings, lists, tables, emphasis, links,
+code/example/quote blocks); anything unrecognised becomes a paragraph.
+
+Note: Markdown has no underline, so Org _underline_ renders as plain text.
+"""
+
+import re
+import sys
+
+
+def convert_inline(text):
+    """Translate inline Org markup into Markdown within a single line.
+
+    Each result is stashed behind a placeholder before the next rule runs, so an
+    emitted delimiter (e.g. the '*' in **bold**) can't be re-matched by a later
+    rule (e.g. the italic rule).
+    """
+    stash = []
+
+    def keep(rendered):
+        stash.append(rendered)
+        return f"\x00{len(stash) - 1}\x00"
+
+    # Links first, so their contents aren't touched by emphasis rules.
+    text = re.sub(r"\[\[([^\]]+)\]\[([^\]]+)\]\]",
+                  lambda m: keep(f"[{m.group(2)}]({m.group(1)})"), text)  # [[url][label]]
+    text = re.sub(r"\[\[([^\]]+)\]\]",
+                  lambda m: keep(f"[{m.group(1)}]({m.group(1)})"), text)  # [[url]]
+
+    # Emphasis. Require non-word neighbours so mid-word delimiters (a/b, foo_bar)
+    # are left alone. Underline has no Markdown equivalent -> drop the markers.
+    rules = [
+        ("*", "**", "**"),  # *bold*      -> **bold**
+        ("/", "*", "*"),    # /italic/    -> *italic*
+        ("_", "", ""),      # _underline_ -> underline (plain; no MD equivalent)
+        ("+", "~~", "~~"),  # +strike+    -> ~~strike~~
+        ("~", "`", "`"),    # ~code~      -> `code`
+        ("=", "`", "`"),    # =verbatim=  -> `verbatim`
+    ]
+    for delim, open_, close_ in rules:
+        d = re.escape(delim)
+        pattern = rf"(?<![\w{d}]){d}(\S|\S.*?\S){d}(?![\w{d}])"
+        text = re.sub(pattern,
+                      lambda m, o=open_, c=close_: keep(f"{o}{m.group(1)}{c}"), text)
+
+    return re.sub(r"\x00(\d+)\x00", lambda m: stash[int(m.group(1))], text)
+
+
+def render_list(items):
+    """Render flat (depth, marker, content) items as an indented Markdown list.
+
+    marker is '-' for bullets or '1.' for numbered; nesting is 2 spaces/level.
+    """
+    out = []
+    for depth, marker, content in items:
+        out.append("  " * (depth - 1) + f"{marker} {content}")
+    return "\n".join(out)
+
+
+def render_table(block, sep_re, row_re):
+    """Render an Org table as a GitHub-flavoured Markdown table.
+
+    The row above a |---| separator is the header; without one, the first row is.
+    """
+    rows = []
+    header_idx = 0
+    for line in block:
+        if sep_re.match(line):
+            # The first separator that follows a row marks the header boundary;
+            # leading/trailing decorative separators (no rows before, or header
+            # already found) are ignored.
+            if rows and header_idx == 0:
+                header_idx = len(rows)
+            continue
+        rows.append([c.strip() for c in row_re.match(line).group(1).split("|")])
+
+    if not rows:
+        return ""
+    if header_idx == 0:  # no separator -> treat first row as the header
+        header_idx = 1
+
+    width = max(len(r) for r in rows)
+
+    def row(cells):
+        cells = [convert_inline(c) for c in cells] + [""] * (width - len(cells))
+        return "| " + " | ".join(cells) + " |"
+
+    out = [row(rows[header_idx - 1]),
+           "| " + " | ".join(["---"] * width) + " |"]
+    out += [row(r) for i, r in enumerate(rows) if i != header_idx - 1]
+    return "\n".join(out)
+
+
+def convert(src):
+    lines = src.splitlines()
+    blocks = []
+    para = []
+    list_items = []
+
+    def flush_para():
+        if para:
+            blocks.append(" ".join(para))
+            para.clear()
+
+    def flush_list():
+        if list_items:
+            blocks.append(render_list(list_items))
+            list_items.clear()
+
+    heading_re = re.compile(r"^(\*+)\s+(.*)$")
+    bullet_re = re.compile(r"^(\s*)[-+]\s+(.*)$")
+    numbered_re = re.compile(r"^(\s*)\d+[.)]\s+(.*)$")
+    block_begin_re = re.compile(r"^\s*#\+begin_(\w+)\b(.*)$", re.IGNORECASE)
+    block_end_re = re.compile(r"^\s*#\+end_(\w+)\s*$", re.IGNORECASE)
+    keyword_re = re.compile(r"^\s*#\+\w")
+    comment_re = re.compile(r"^\s*#(\s|$)")
+    table_re = re.compile(r"^\s*\|(.*)\|\s*$")
+    table_sep_re = re.compile(r"^\s*\|[-+|]*\|?\s*$")
+    hr_re = re.compile(r"^\s*-{5,}\s*$")
+
+    def depth_of(indent):
+        return len(indent.replace("\t", "  ")) // 2 + 1
+
+    i, n = 0, len(lines)
+    while i < n:
+        line = lines[i]
+
+        if not line.strip():
+            flush_para()
+            flush_list()
+            i += 1
+            continue
+
+        m = block_begin_re.match(line)
+        if m:
+            flush_para()
+            flush_list()
+            kind = m.group(1).lower()
+            rest = m.group(2).strip()
+            body = []
+            i += 1
+            while i < n:
+                e = block_end_re.match(lines[i])
+                if e and e.group(1).lower() == kind:
+                    i += 1
+                    break
+                body.append(lines[i])
+                i += 1
+            if kind == "src":
+                lang = rest.split()[0] if rest else ""
+                blocks.append(f"```{lang}\n" + "\n".join(body) + "\n```")
+            elif kind == "quote":
+                blocks.append("\n".join(f"> {convert_inline(b)}" if b.strip() else ">"
+                                        for b in body))
+            else:  # example, verse, anything else -> fenced code (verbatim)
+                blocks.append("```\n" + "\n".join(body) + "\n```")
+            continue
+
+        if keyword_re.match(line) or comment_re.match(line):
+            i += 1
+            continue
+
+        m = heading_re.match(line)
+        if m:
+            flush_para()
+            flush_list()
+            level = min(len(m.group(1)), 6)
+            blocks.append("#" * level + " " + convert_inline(m.group(2).strip()))
+            i += 1
+            continue
+
+        if table_re.match(line):
+            flush_para()
+            flush_list()
+            block = []
+            while i < n and table_re.match(lines[i]):
+                block.append(lines[i])
+                i += 1
+            blocks.append(render_table(block, table_sep_re, table_re))
+            continue
+
+        if hr_re.match(line):
+            flush_para()
+            flush_list()
+            blocks.append("---")
+            i += 1
+            continue
+
+        m = numbered_re.match(line)
+        if m:
+            flush_para()
+            list_items.append((depth_of(m.group(1)), "1.", convert_inline(m.group(2))))
+            i += 1
+            continue
+
+        m = bullet_re.match(line)
+        if m:
+            flush_para()
+            list_items.append((depth_of(m.group(1)), "-", convert_inline(m.group(2))))
+            i += 1
+            continue
+
+        flush_list()
+        para.append(convert_inline(line))
+        i += 1
+
+    flush_para()
+    flush_list()
+    return "\n\n".join(b for b in blocks if b) + "\n"
+
+
+def main():
+    sys.stdout.write(convert(sys.stdin.read()))
+
+
+if __name__ == "__main__":
+    main()
