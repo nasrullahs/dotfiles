@@ -71,29 +71,37 @@ def render_list(items):
     return "\n".join(out)
 
 
+DIVIDER = object()  # stands in for a |---| that groups rows mid-table
+
+
 def render_table(block, sep_re, row_re):
     """Render an Org table as a GitHub-flavoured Markdown table.
 
     The row above a |---| separator is the header; without one, the first row is.
+    Markdown allows only that one rule, so any further separators -- which group
+    rows visually in Org -- are emitted as blank body rows instead.
     """
-    rows = []
+    rows = []  # cell lists, interleaved with DIVIDER for grouping separators
     header_idx = 0
     for line in block:
         if sep_re.match(line):
-            # The first separator that follows a row marks the header boundary;
-            # leading/trailing decorative separators (no rows before, or header
-            # already found) are ignored.
-            if rows and header_idx == 0:
-                header_idx = len(rows)
+            if not rows:
+                continue  # leading decoration, nothing to separate yet
+            if header_idx == 0:
+                header_idx = len(rows)  # first separator after a row: header rule
+            elif rows[-1] is not DIVIDER:  # collapse runs of separators
+                rows.append(DIVIDER)
             continue
         rows.append([c.strip() for c in row_re.match(line).group(1).split("|")])
 
     if not rows:
         return ""
+    if rows[-1] is DIVIDER:  # trailing decoration
+        rows.pop()
     if header_idx == 0:  # no separator -> treat first row as the header
         header_idx = 1
 
-    width = max(len(r) for r in rows)
+    width = max(len(r) for r in rows if r is not DIVIDER)
 
     def row(cells):
         cells = [convert_inline(c) for c in cells] + [""] * (width - len(cells))
@@ -101,7 +109,8 @@ def render_table(block, sep_re, row_re):
 
     out = [row(rows[header_idx - 1]),
            "| " + " | ".join(["---"] * width) + " |"]
-    out += [row(r) for i, r in enumerate(rows) if i != header_idx - 1]
+    out += [row([]) if r is DIVIDER else row(r)
+            for i, r in enumerate(rows) if i != header_idx - 1]
     return "\n".join(out)
 
 
